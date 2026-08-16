@@ -68,9 +68,16 @@ def generate_content(theme):
 def render_image(data, date_str):
     from playwright.sync_api import sync_playwright
 
+    with open("assets/logo.png", "rb") as logo_file:
+        logo_base64 = base64.b64encode(logo_file.read()).decode("utf-8")
+    logo_data_uri = f"data:image/png;base64,{logo_base64}"
+
     with open("template.html") as f:
         html = f.read()
-    html = html.replace("{{HEADLINE}}", data["headline"]).replace("{{BODY}}", data["body"])
+    html = (html
+            .replace("{{LOGO_PATH}}", logo_data_uri)
+            .replace("{{HEADLINE}}", data["headline"])
+            .replace("{{BODY}}", data["body"]))
 
     os.makedirs("public/posts", exist_ok=True)
     temp_html_path = f"public/posts/{date_str}.html"
@@ -82,12 +89,15 @@ def render_image(data, date_str):
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1080, "height": 1080})
         page.goto(f"file://{os.path.abspath(temp_html_path)}")
+        page.wait_for_function(
+            "document.querySelector('img.logo').complete && document.querySelector('img.logo').naturalWidth > 0"
+        )
         page.screenshot(path=png_path)
         browser.close()
 
     os.remove(temp_html_path)
     return png_path
-
+    
 def main():
     date_str = datetime.date.today().isoformat()
     theme = get_theme()
