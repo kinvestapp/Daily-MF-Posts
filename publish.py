@@ -25,7 +25,7 @@ def main():
     with open(f"public/posts/{date_str}.json") as f:
         data = json.load(f)
 
-    image_url = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/public/posts/{date_str}.png"
+    image_url = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/public/posts/{date_str}.png?v={int(time.time())}"
     caption = data["caption"] + "\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully"
 
     access_token = os.environ["META_ACCESS_TOKEN"]
