@@ -4,9 +4,6 @@ REPO = "kinvestapp/Daily-MF-Posts"
 BRANCH = "main"
 
 def wait_for_image_url(image_url, max_attempts=6, delay_seconds=5):
-    """Poll the raw GitHub URL until it's actually reachable, since there's
-    a short propagation delay right after a push. Uses GET, not HEAD --
-    raw.githubusercontent.com handles HEAD requests unreliably."""
     for attempt in range(max_attempts):
         try:
             response = requests.get(image_url, timeout=10, stream=True)
@@ -19,7 +16,23 @@ def wait_for_image_url(image_url, max_attempts=6, delay_seconds=5):
             print(f"Request failed (attempt {attempt + 1}/{max_attempts}): {e}")
         time.sleep(delay_seconds)
     return False
-    
+
+def wait_for_container_ready(container_id, access_token, max_attempts=8, delay_seconds=3):
+    """Poll Instagram's container status until it's FINISHED and ready to publish."""
+    for attempt in range(max_attempts):
+        status = requests.get(
+            f"https://graph.facebook.com/v21.0/{container_id}",
+            params={"fields": "status_code", "access_token": access_token}
+        ).json()
+        code = status.get("status_code")
+        print(f"Container status (attempt {attempt + 1}/{max_attempts}): {code}")
+        if code == "FINISHED":
+            return True
+        if code == "ERROR":
+            raise RuntimeError(f"Instagram container processing failed: {status}")
+        time.sleep(delay_seconds)
+    return False
+
 def main():
     date_str = datetime.date.today().isoformat()
     with open(f"public/posts/{date_str}.json") as f:
@@ -35,7 +48,7 @@ def main():
     if not wait_for_image_url(image_url):
         raise RuntimeError(f"Image URL never became reachable: {image_url}")
 
-    # --- Instagram: create container, then publish ---
+    # --- Instagram: create container, wait until ready, then publish ---
     container = requests.post(
         f"https://graph.facebook.com/v21.0/{ig_user_id}/media",
         data={"image_url": image_url, "caption": caption, "access_token": access_token}
@@ -44,6 +57,9 @@ def main():
 
     if "id" not in container:
         raise RuntimeError(f"Instagram container creation failed: {container}")
+
+    if not wait_for_container_ready(container["id"], access_token):
+        raise RuntimeError("Instagram container never finished processing.")
 
     ig_result = requests.post(
         f"https://graph.facebook.com/v21.0/{ig_user_id}/media_publish",
