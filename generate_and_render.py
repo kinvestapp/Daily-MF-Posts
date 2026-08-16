@@ -21,13 +21,15 @@ def get_theme():
     return THEMES[day_index % len(THEMES)]
 
 def generate_content(theme):
+    from anthropic import Anthropic
     client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     system_prompt = (
         "You write short, compliant social media content for an Indian AMFI-registered "
         "Mutual Fund Distributor (MFD). Rules: no NAV or return percentages, no scheme names, "
         "no performance predictions or guarantees, no use of the words 'financial planning' or "
         "'financial advisor'. Content must be purely educational/conceptual, never scheme-specific "
-        "advice. Return ONLY valid JSON, no other text, in this exact shape: "
+        "advice. Respond with ONLY a raw JSON object, no markdown code fences, no preamble, no "
+        "explanation, no backticks. The response must start with { and end with }. Shape: "
         '{"headline": "...", "body": "...", "caption": "..."}. '
         "headline: max 8 words. body: max 25 words. caption: 2-3 sentences plus 4-5 relevant hashtags."
     )
@@ -38,6 +40,22 @@ def generate_content(theme):
         messages=[{"role": "user", "content": f"Today's theme: {theme}"}]
     )
     text = message.content[0].text.strip()
+    print(f"Raw Claude response: {text}")  # visible in Actions log if it fails again
+
+    # Strip markdown code fences if present, despite instructions
+    if text.startswith("```"):
+        text = text.split("```")[1]
+        if text.startswith("json"):
+            text = text[4:]
+        text = text.strip()
+
+    # Extract just the {...} portion in case of any stray text
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end == -1:
+        raise ValueError(f"No JSON object found in Claude response: {text}")
+    text = text[start:end+1]
+
     data = json.loads(text)
 
     combined_check = (data["headline"] + " " + data["body"] + " " + data["caption"]).lower()
@@ -46,7 +64,7 @@ def generate_content(theme):
             raise ValueError(f"Content failed compliance check on pattern: {pattern}. Raw: {data}")
 
     return data
-
+    
 def render_image(data, date_str):
     from playwright.sync_api import sync_playwright
 
