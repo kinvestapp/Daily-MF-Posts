@@ -1,4 +1,4 @@
-import os, json, datetime, re
+import os, json, datetime, re, base64
 from anthropic import Anthropic
 
 THEMES = [
