@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin:0; width:1080px; height:1080px; background:#F0E6D2; font-family:Georgia, serif; }
+  .frame { box-sizing:border-box; width:1040px; height:1040px; margin:20px; border:6px solid #B8860B; position:relative; overflow:hidden; background:#F5EEDD; }
+  .illustration { position:absolute; top:0; left:0; width:100%; height:720px; object-fit:cover; }
+  .logo { position:absolute; top:20px; left:20px; height:90px; z-index:2; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+  .text-panel { position:absolute; top:720px; left:0; width:100%; height:200px; background:#F5EEDD; box-sizing:border-box; padding:25px 50px; text-align:center; }
+  .headline { color:#1B2A56; font-size:42px; line-height:1.25; margin-bottom:15px; font-weight:bold; }
+  .body-text { color:#3A3226; font-size:24px; line-height:1.4; }
+  .footer { position:absolute; bottom:0; left:0; width:100%; box-sizing:border-box; text-align:center; color:#6B5D3F; border-top:2px solid #B8860B; padding:14px 40px; background:#F0E6D2; }
+  .footer-line1 { font-size:15px; margin-bottom:4px; }
+  .footer-line2 { font-size:13px; }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <img class="illustration" src="{{ILLUSTRATION_PATH}}" />
+    <img class="logo" src="{{LOGO_PATH}}" />
+    <div class="text-panel">
+      <div class="headline">{{HEADLINE}}</div>
+      <div class="body-text">{{BODY}}</div>
+    </div>
+    <div class="footer">
+      <div class="footer-line1">ARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802</div>
+      <div class="footer-line2">Mutual Fund investments are subject to market risks, read all scheme related documents carefully</div>
+    </div>
+  </div>
+</body>
+</html>
