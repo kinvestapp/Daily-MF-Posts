@@ -1,0 +1,4 @@
+anthropic
+playwright
+requests
+google-genai
