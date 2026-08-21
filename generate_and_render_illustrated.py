@@ -151,12 +151,12 @@ def render_image(data, illustration_data_uri, date_str):
             .replace("{{HEADLINE}}", data["headline"])
             .replace("{{BODY}}", data["body"]))
 
-    os.makedirs("public/posts_test", exist_ok=True)
-    temp_html_path = f"public/posts_test/{date_str}-illustrated.html"
+    os.makedirs("public/posts", exist_ok=True)
+    temp_html_path = f"public/posts/{date_str}.html"
     with open(temp_html_path, "w") as f:
         f.write(html)
 
-    png_path = f"public/posts_test/{date_str}-illustrated.png"
+    png_path = f"public/posts/{date_str}.png"
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1080, "height": 1080})
@@ -170,14 +170,18 @@ def render_image(data, illustration_data_uri, date_str):
 
     os.remove(temp_html_path)
     return png_path
-
+    
 def main():
     date_str = datetime.date.today().isoformat()
     theme, character_key = get_theme_and_character()
     data = generate_content(theme)
     illustration_data_uri = generate_illustration(theme, character_key)
     png_path = render_image(data, illustration_data_uri, date_str)
-    print(f"Generated (TEST, not published): {png_path} (character: {character_key})")
+
+    with open(f"public/posts/{date_str}.json", "w") as f:
+        json.dump({"date": date_str, "theme": theme, "character": character_key, **data, "image": png_path}, f, indent=2)
+
+    print(f"Generated: {png_path} (character: {character_key})")
 
 if __name__ == "__main__":
     main()
