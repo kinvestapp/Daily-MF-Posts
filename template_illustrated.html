@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body { margin:0; width:1080px; height:1080px; background:#F0E6D2; font-family:Georgia, serif; }
-  .frame { box-sizing:border-box; width:1040px; height:1040px; margin:20px; border:6px solid #B8860B; position:relative; overflow:hidden; background:#F5EEDD; }
-  .illustration { position:absolute; top:0; left:0; width:100%; height:720px; object-fit:cover; }
-  .logo { position:absolute; top:20px; left:20px; height:90px; z-index:2; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-  .text-panel { position:absolute; top:720px; left:0; width:100%; height:200px; background:#F5EEDD; box-sizing:border-box; padding:25px 50px; text-align:center; }
-  .headline { color:#1B2A56; font-size:42px; line-height:1.25; margin-bottom:15px; font-weight:bold; }
-  .body-text { color:#3A3226; font-size:24px; line-height:1.4; }
-  .footer { position:absolute; bottom:0; left:0; width:100%; box-sizing:border-box; text-align:center; color:#6B5D3F; border-top:2px solid #B8860B; padding:14px 40px; background:#F0E6D2; }
-  .footer-line1 { font-size:15px; margin-bottom:4px; }
-  .footer-line2 { font-size:13px; }
+  body { margin:0; width:1080px; height:1080px; background:#F0E6D2; }
+  .frame { box-sizing:border-box; width:1040px; height:1040px; margin:20px; border:6px solid #B8860B; position:relative; overflow:hidden; }
+  .illustration { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+  .logo { position:absolute; top:24px; left:24px; height:85px; z-index:2; }
+  .text-zone { position:absolute; bottom:70px; left:0; width:100%; box-sizing:border-box; padding:0 70px; text-align:center; z-index:2; }
+  .headline { font-family:'Kalam', cursive; font-weight:700; color:#1B2A56; font-size:46px; line-height:1.25; margin-bottom:14px; }
+  .body-text { font-family:'Kalam', cursive; font-weight:400; color:#3A3226; font-size:26px; line-height:1.4; }
+  .footer { position:absolute; bottom:0; left:0; width:100%; box-sizing:border-box; text-align:center; color:#6B5D3F; border-top:2px solid #B8860B; padding:12px 40px; background:rgba(245,238,221,0.92); z-index:2; font-family:Georgia, serif; }
+  .footer-line1 { font-size:14px; margin-bottom:3px; }
+  .footer-line2 { font-size:12px; }
 </style>
 </head>
 <body>
   <div class="frame">
     <img class="illustration" src="{{ILLUSTRATION_PATH}}" />
     <img class="logo" src="{{LOGO_PATH}}" />
-    <div class="text-panel">
+    <div class="text-zone">
       <div class="headline">{{HEADLINE}}</div>
       <div class="body-text">{{BODY}}</div>
     </div>
