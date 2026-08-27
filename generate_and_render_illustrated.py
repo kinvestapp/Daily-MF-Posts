@@ -21,23 +21,24 @@ CHARACTER_DESCRIPTIONS = {
 }
 
 BANNED_PATTERNS = [
-    r"NAV",
-    r"guaranteed",
-    r"assured return",
-    r"financial plan",
-    r"financial advisor",
-    r"best fund",
-    r"top scheme",
+    r"\bNAV\b",
+    r"\bguaranteed\b",
+    r"\bassured return\b",
+    r"\bfinancial plan(?:ning)?\b",
+    r"\bfinancial advisor\b",
+    r"\bbest fund\b",
+    r"\btop scheme\b",
     r"\d+(\.\d+)?%\s*(p\.?a\.?|per annum|returns?|growth|gains?|cagr|yield|profit|appreciation)",
     r"(returns?|growth|gains?|cagr|yield|profit|appreciation|grew|grow)\s+(of|by|was|is|at)?\s*\d+(\.\d+)?%",
 ]
+
 
 
 def get_theme_and_character():
     day_index = datetime.date.today().weekday()
     return THEMES[day_index % len(THEMES)]
 
-def generate_content(theme):
+def generate_content(theme, max_attempts=3):
     from anthropic import Anthropic
     client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     system_prompt = (
@@ -50,35 +51,59 @@ def generate_content(theme):
         '{"headline": "...", "body": "...", "caption": "..."}. '
         "headline: max 8 words. body: max 25 words. caption: 2-3 sentences plus 4-5 relevant hashtags."
     )
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=400,
-        system=system_prompt,
-        messages=[{"role": "user", "content": f"Today's theme: {theme}"}]
+
+    messages = [{"role": "user", "content": f"Today's theme: {theme}"}]
+
+    for attempt in range(1, max_attempts + 1):
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=400,
+            system=system_prompt,
+            messages=messages,
+        )
+        text = message.content[0].text.strip()
+        print(f"Raw Claude response (attempt {attempt}): {text}")
+
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+            text = text.strip()
+
+        start = text.find("{")
+        end = text.rfind("}")
+        if start == -1 or end == -1:
+            raise ValueError(f"No JSON object found in Claude response: {text}")
+        json_text = text[start:end + 1]
+
+        data = json.loads(json_text)
+
+        combined_check = (data["headline"] + " " + data["body"] + " " + data["caption"]).lower()
+        failed_pattern = None
+        for pattern in BANNED_PATTERNS:
+            if re.search(pattern, combined_check, re.IGNORECASE):
+                failed_pattern = pattern
+                break
+
+        if failed_pattern is None:
+            return data
+
+        print(f"Compliance check failed on pattern: {failed_pattern}. Retrying...")
+        messages.append({"role": "assistant", "content": text})
+        messages.append({
+            "role": "user",
+            "content": (
+                f"That response matched a banned compliance pattern ({failed_pattern}) and cannot "
+                "be used. Rewrite the content to avoid this, keeping it purely educational and "
+                "compliant with the rules above. Respond with ONLY the raw JSON object."
+            ),
+        })
+
+    raise ValueError(
+        f"Content failed compliance check after {max_attempts} attempts. Last raw: {data}"
     )
-    text = message.content[0].text.strip()
-    print(f"Raw Claude response: {text}")
 
-    if text.startswith("```"):
-        text = text.split("```")[1]
-        if text.startswith("json"):
-            text = text[4:]
-        text = text.strip()
-
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end == -1:
-        raise ValueError(f"No JSON object found in Claude response: {text}")
-    text = text[start:end+1]
-
-    data = json.loads(text)
-
-    combined_check = (data["headline"] + " " + data["body"] + " " + data["caption"]).lower()
-    for pattern in BANNED_PATTERNS:
-        if re.search(pattern, combined_check, re.IGNORECASE):
-            raise ValueError(f"Content failed compliance check on pattern: {pattern}. Raw: {data}")
-
-    return data
+return data
 
 def generate_illustration(theme, character_key):
     from google import genai
