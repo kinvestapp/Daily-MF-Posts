@@ -33,10 +33,10 @@ BANNED_PATTERNS = [
 ]
 
 
-
 def get_theme_and_character():
     day_index = datetime.date.today().weekday()
     return THEMES[day_index % len(THEMES)]
+
 
 def generate_content(theme, max_attempts=3):
     from anthropic import Anthropic
@@ -49,7 +49,11 @@ def generate_content(theme, max_attempts=3):
         "advice. Respond with ONLY a raw JSON object, no markdown code fences, no preamble, no "
         "explanation, no backticks. The response must start with { and end with }. Shape: "
         '{"headline": "...", "body": "...", "caption": "..."}. '
-        "headline: max 8 words. body: max 25 words. caption: 2-3 sentences plus 4-5 relevant hashtags."
+        "headline: max 8 words. body: max 25 words. caption: 2-3 plain sentences followed by 4-5 "
+        "hashtags written inline as plain text (e.g. #Example #Example2), NOT as a JSON array or "
+        "nested object. Do not use double quotes inside any string value — if you need to emphasize "
+        "a word or phrase, use single quotes or no quotes at all. The entire response must be a "
+        "single valid JSON object with exactly three string fields."
     )
 
     messages = [{"role": "user", "content": f"Today's theme: {theme}"}]
@@ -73,10 +77,32 @@ def generate_content(theme, max_attempts=3):
         start = text.find("{")
         end = text.rfind("}")
         if start == -1 or end == -1:
-            raise ValueError(f"No JSON object found in Claude response: {text}")
+            print(f"No JSON object found on attempt {attempt}. Retrying...")
+            messages.append({"role": "assistant", "content": text})
+            messages.append({
+                "role": "user",
+                "content": "That response did not contain a JSON object. Respond with ONLY the raw JSON object as specified.",
+            })
+            continue
+
         json_text = text[start:end + 1]
 
-        data = json.loads(json_text)
+        try:
+            data = json.loads(json_text)
+        except json.JSONDecodeError as e:
+            print(f"JSON parse failed on attempt {attempt}: {e}. Retrying...")
+            messages.append({"role": "assistant", "content": text})
+            messages.append({
+                "role": "user",
+                "content": (
+                    f"That response was not valid JSON ({e}). A likely cause is unescaped double "
+                    "quotes inside a string value, or a nested object/array where plain text was "
+                    "expected. Rewrite it as a single valid JSON object with exactly the fields "
+                    "headline, body, caption — all plain strings, no nested quotes, no nested "
+                    "objects or arrays. Respond with ONLY the raw JSON object."
+                ),
+            })
+            continue
 
         combined_check = (data["headline"] + " " + data["body"] + " " + data["caption"]).lower()
         failed_pattern = None
@@ -99,9 +125,7 @@ def generate_content(theme, max_attempts=3):
             ),
         })
 
-    raise ValueError(
-        f"Content failed compliance check after {max_attempts} attempts. Last raw: {data}"
-    )
+    raise ValueError(f"Content failed after {max_attempts} attempts.")
 
 
 def generate_illustration(theme, character_key):
@@ -137,7 +161,7 @@ def generate_illustration(theme, character_key):
         "background text. "
         "Warm, optimistic, approachable mood suitable for an Indian personal finance social media post."
     )
-    
+
     generation_config = {
         'temperature': 1,
         'max_output_tokens': 65536,
@@ -167,6 +191,7 @@ def generate_illustration(theme, character_key):
         raise RuntimeError(f"No image returned from Gemini. Full interaction: {interaction}")
 
     return f"data:image/png;base64,{image_b64}"
+
 
 def render_image(data, illustration_data_uri, date_str):
     from playwright.sync_api import sync_playwright
@@ -202,7 +227,8 @@ def render_image(data, illustration_data_uri, date_str):
 
     os.remove(temp_html_path)
     return png_path
-    
+
+
 def main():
     date_str = datetime.date.today().isoformat()
     theme, character_key = get_theme_and_character()
@@ -214,6 +240,7 @@ def main():
         json.dump({"date": date_str, "theme": theme, "character": character_key, **data, "image": png_path}, f, indent=2)
 
     print(f"Generated: {png_path} (character: {character_key})")
+
 
 if __name__ == "__main__":
     main()
