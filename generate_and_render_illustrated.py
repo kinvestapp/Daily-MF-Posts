@@ -21,9 +21,17 @@ CHARACTER_DESCRIPTIONS = {
 }
 
 BANNED_PATTERNS = [
-    r"\d+%", r"NAV", r"guaranteed", r"assured return", r"financial plan",
-    r"financial advisor", r"best fund", r"top scheme"
+    r"NAV",
+    r"guaranteed",
+    r"assured return",
+    r"financial plan",
+    r"financial advisor",
+    r"best fund",
+    r"top scheme",
+    r"\d+(\.\d+)?%\s*(p\.?a\.?|per annum|returns?|growth|gains?|cagr|yield|profit|appreciation)",
+    r"(returns?|growth|gains?|cagr|yield|profit|appreciation|grew|grow)\s+(of|by|was|is|at)?\s*\d+(\.\d+)?%",
 ]
+
 
 def get_theme_and_character():
     day_index = datetime.date.today().weekday()
