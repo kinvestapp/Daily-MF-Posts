@@ -103,7 +103,6 @@ def generate_content(theme, max_attempts=3):
         f"Content failed compliance check after {max_attempts} attempts. Last raw: {data}"
     )
 
-return data
 
 def generate_illustration(theme, character_key):
     from google import genai
