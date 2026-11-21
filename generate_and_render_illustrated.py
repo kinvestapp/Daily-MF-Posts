@@ -130,9 +130,14 @@ def generate_content(theme, max_attempts=3):
 
 def generate_illustration(theme, character_key):
     from google import genai
+from google.genai import types
 
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    ref_path = CHARACTER_FILES[character_key]
+# The Interactions API now defaults to v1, which rejects response_modalities.
+client = genai.Client(
+    api_key=os.environ["GEMINI_API_KEY"],
+    http_options=types.HttpOptions(api_version="v1beta"),
+)
+ref_path = CHARACTER_FILES[character_key]
     char_desc = CHARACTER_DESCRIPTIONS[character_key]
 
     uploaded_file = client.files.upload(file=ref_path)
