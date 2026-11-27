@@ -13,8 +13,10 @@ ROOT = Path(__file__).resolve().parent.parent
 USAGE = ROOT / "data" / "api_usage.jsonl"
 PRICES = {"haiku": (1.0, 5.0), "sonnet": (3.0, 15.0), "opus": (15.0, 75.0)}
 
-WRITER_MODELS = [os.environ.get("WRITER_MODEL", "claude-sonnet-5-5"), "claude-haiku-4-5-20251001"]
-REVIEW_MODELS = [os.environ.get("REVIEW_MODEL", "claude-haiku-4-5-20251001")]
+# Writer: Haiku (no extended thinking, cheap, predictable length). Reviewer: stronger model, judged on short output.
+# Override with WRITER_MODEL / REVIEW_MODEL. Models that think before answering need a generous max_tokens.
+WRITER_MODELS = [os.environ.get("WRITER_MODEL", "claude-haiku-4-5-20251001")]
+REVIEW_MODELS = [os.environ.get("REVIEW_MODEL", "claude-sonnet-5-5"), "claude-haiku-4-5-20251001"]
 
 _calls_this_run = 0
 _client = None
@@ -23,6 +25,10 @@ _thinking_off = True
 
 class BudgetExceeded(RuntimeError):
     pass
+
+
+class Truncated(RuntimeError):
+    """The reply hit max_tokens (often because the model spent them thinking), so the text is incomplete."""
 
 
 def _price(model):
@@ -101,6 +107,8 @@ def call(models, system, messages, max_tokens, purpose):
         _calls_this_run += 1
         row = _log(model, purpose, msg.usage.input_tokens, msg.usage.output_tokens)
         print(f"[llm] {purpose}: {model} in={row['input_tokens']} out={row['output_tokens']} ~${row['est_usd']:.4f} (month ~${month_spend():.2f})")
+        if getattr(msg, "stop_reason", None) == "max_tokens":
+            raise Truncated(f"{purpose}: reply cut off at max_tokens={max_tokens} (output tokens {row['output_tokens']})")
         # newer models may return thinking blocks first: keep only the text blocks
         return "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "text") == "text")
     raise RuntimeError(f"no usable model among {models}: {last}")

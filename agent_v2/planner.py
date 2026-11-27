@@ -84,7 +84,7 @@ def write_batch(assignments, feedback=None):
 
 def review(posts):
     payload = json.dumps([{"id": i, **{k: p[k] for k in ("slides", "caption")}} for i, p in enumerate(posts, 1)], ensure_ascii=False)
-    text = llm.call(llm.REVIEW_MODELS, REVIEW_SYSTEM, [{"role": "user", "content": payload}], max_tokens=1500, purpose="planner-review")
+    text = llm.call(llm.REVIEW_MODELS, REVIEW_SYSTEM, [{"role": "user", "content": payload}], max_tokens=8000, purpose="planner-review")
     return {r["id"]: r.get("issues", []) for r in _json(text, "{")["results"] if not r.get("ok", False)}
 
 
@@ -138,7 +138,12 @@ def main():
             problems[i] = [why]
         else:
             accepted[i] = post
-    flagged = review([accepted[i] for i in sorted(accepted)]) if accepted else {}
+    review_note = "reviewed"
+    try:
+        flagged = review([accepted[i] for i in sorted(accepted)]) if accepted else {}
+    except (llm.Truncated, ValueError, KeyError, json.JSONDecodeError) as e:
+        print(f"[planner] WARNING review unusable, continuing with code checks only: {e}")
+        flagged, review_note = {}, f"REVIEW SKIPPED ({str(e)[:80]})"
     order = sorted(accepted)
     for pos, i in enumerate(order, 1):          # review ids are positions within the reviewed list
         if pos in flagged:
@@ -165,7 +170,7 @@ def main():
         saved.append(save(accepted[i], n))
         n += 1
     stamp = datetime.date.today().isoformat()
-    lines = [f"# Weekly planner report ({stamp})", "", f"Queued {len(saved)} of {args.count} posts. Month-to-date API spend (estimate): ${llm.month_spend():.2f}", "",
+    lines = [f"# Weekly planner report ({stamp})", "", f"Queued {len(saved)} of {args.count} posts ({review_note}). Month-to-date API spend (estimate): ${llm.month_spend():.2f}", "",
              "## Hook performance (score per 1,000 reached)", ""]
     lines += [f"- {h}: mean {v['mean']} over {v['n']} post(s)" for h, v in sorted(htable.items(), key=lambda kv: -kv[1]['mean'])] or ["- no results collected yet (rotating hooks evenly)"]
     lines += ["", "## This batch", ""] + [f"- {s}" for s in saved]
