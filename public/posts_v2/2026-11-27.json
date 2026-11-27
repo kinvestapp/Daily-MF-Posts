@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-27",
+  "hook": "scarcity_of_time",
+  "topic": "NRI basics: KYC, FATCA and investing from the Nordics",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NRI INVESTING",
+      "headline": "Time compounds faster than money ever will.",
+      "subhead": "Start your journey today, one simple step at a time.",
+      "icon": "clock"
+    },
+    {
+      "kind": "value",
+      "title": "Three foundations for NRI investors",
+      "points": [
+        {
+          "title": "KYC first",
+          "text": "Complete Know Your Customer once. It unlocks your ability to invest."
+        },
+        {
+          "title": "FATCA clarity",
+          "text": "Tax transparency between India and your Nordic country. Simple, legal, permanent."
+        },
+        {
+          "title": "Invest with ease",
+          "text": "From the Nordics, invest in India using compliant, trusted platforms."
+        }
+      ],
+      "icon": "shield"
+    },
+    {
+      "kind": "cta",
+      "headline": "Ready to start your NRI journey?",
+      "cta": "Save this guide for your first conversation.",
+      "footnote": "K-Invest.app is AMFI-registered and compliant with all NRI regulations."
+    }
+  ],
+  "caption": "Time is your most valuable asset as an NRI investor. KYC, FATCA and a trusted platform are your three building blocks. Start today, however small. #NRIInvesting #InvestFromNordics #TimeInMoney #SIPJourney #KYCMatters",
+  "caption_full": "Time is your most valuable asset as an NRI investor. KYC, FATCA and a trusted platform are your three building blocks. Start today, however small. #NRIInvesting #InvestFromNordics #TimeInMoney #SIPJourney #KYCMatters\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
+  "images": [
+    "public/posts_v2/2026-11-27/2026-11-27-1.jpg",
+    "public/posts_v2/2026-11-27/2026-11-27-2.jpg",
+    "public/posts_v2/2026-11-27/2026-11-27-3.jpg"
+  ],
+  "format": "carousel_3",
+  "published": {}
+}
