@@ -14,6 +14,7 @@ from pathlib import Path
 
 from .content import generate_post
 from .hooks import pick_hook, pick_topic
+from .reel import build_reel
 from .render import render_slides
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -49,14 +50,15 @@ def main():
         shutil.rmtree(day_dir)
 
     hook_hist, topic_hist = load_history()
-    hook_key, topic = pick_hook(hook_hist), pick_topic(topic_hist)
+    hook_key = pick_hook(hook_hist)
+    topic, segment = pick_topic(topic_hist)
 
     post, paths, issues = None, [], ["not started"]
     for attempt in range(1, MAX_RENDER_ATTEMPTS + 1):
         if args.sample:
             post = json.load(open(ROOT / "agent_v2" / "fixtures" / "sample_post.json", encoding="utf-8"))
         else:
-            post = generate_post(topic, hook_key)
+            post = generate_post(topic, hook_key, segment)
         paths, issues = render_slides(post, day_dir, date_str)
         if not issues:
             break
@@ -66,15 +68,24 @@ def main():
         raise RuntimeError(f"Quality gate failed after {MAX_RENDER_ATTEMPTS} attempts: {issues}")
 
     rel = [str(Path(p).relative_to(ROOT)) for p in paths]
+    reel_rel, reel_audio = None, None
+    try:
+        reel_abs, reel_audio = build_reel(paths, day_dir / "reel.mp4")
+        reel_rel = str(Path(reel_abs).relative_to(ROOT))
+    except Exception as e:  # a failed Reel must never block the carousel
+        print(f"[reel] skipped: {e}")
     meta = {
         "date": date_str,
         "hook": post.get("hook", hook_key),
         "topic": post.get("topic", topic),
+        "segment": post.get("segment", segment),
         "slides": post["slides"],
         "caption": post["caption"],
         "caption_full": post["caption"] + CAPTION_FOOTER,
         "images": rel,
         "format": "carousel_3",
+        "reel": reel_rel,
+        "reel_audio": reel_audio,
         "published": {},
     }
     OUT.mkdir(parents=True, exist_ok=True)

@@ -27,6 +27,13 @@ BANNED_PATTERNS = [
     r"\bbeat the market\b",
     r"\bhigh returns?\b",
     r"\bmultibagger\b",
+    # Regulatory / trust claims the distributor cannot make.
+    r"\bcompliant (with|to)\b",
+    r"\b(sebi|amfi|rbi)[- ]?(approved|endorsed|recommended|certified|guaranteed)\b",
+    r"\b(approved|endorsed|regulated|certified) by (sebi|amfi|rbi|the government)\b",
+    r"\btrusted (platform|partner|advis|choice)",
+    r"\b(100%|completely|totally) (safe|secure)\b",
+    r"\bpermanent\b",
 ]
 
 REQUIRED_FOOTER = [

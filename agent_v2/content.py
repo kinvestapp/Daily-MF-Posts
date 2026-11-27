@@ -3,14 +3,16 @@ import json
 import os
 
 from .compliance import lint_post
-from .hooks import HOOKS
+from .hooks import HOOKS, SEGMENTS
 
 ICONS = ["growth", "shield", "clock", "target", "home", "cap", "coin", "globe", "handshake", "calendar"]
 
 MODEL = os.environ.get("CONTENT_MODEL", "claude-haiku-4-5-20251001")
 
 SYSTEM = f"""You write compliant Instagram carousel copy for K-Invest.app, an AMFI-registered
-Mutual Fund Distributor serving the Indian diaspora in the Nordics.
+Mutual Fund Distributor. Audience in priority order: Chennai and Tamil Nadu, rest of South India,
+North India, then NRIs/overseas Indians. Most investors are domestic, so write for people living in India
+unless the assignment says the NRI segment. Never mention Nordic countries.
 
 HARD RULES (never break):
 - Purely educational and conceptual. No scheme names, no NAV, no return percentages, no predictions,
@@ -20,6 +22,8 @@ HARD RULES (never break):
 - Never attack banks, AMCs or competitors. No testimonials. No invented statistics.
 - Any numeric example must be simple arithmetic of the user's OWN contributions (e.g. 5,000 x 12 x 10 = 6,00,000)
   and be labelled 'For illustration only'. Never show growth/return figures.
+- Never claim that anything is 'compliant with', 'approved by', 'endorsed by' or 'regulated by' any authority except the plain
+  fact 'AMFI-registered Mutual Fund Distributor'. No words like 'trusted', 'safe', 'secure', 'permanent' or 'risk-free'.
 - Use the Indian rupee sign as the single character used for rupees, and Indian number grouping (6,00,000 or 6 lakh).
 
 OUTPUT: ONLY a raw JSON object (no markdown fences, no commentary), exactly this shape:
@@ -84,12 +88,13 @@ def validate_shape(post):
     return post
 
 
-def generate_post(topic, hook_key, max_attempts=4):
+def generate_post(topic, hook_key, segment="chennai_tn", max_attempts=4):
     from anthropic import Anthropic
     client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     hook = HOOKS[hook_key]
     user = (
         f"Topic: {topic}\n"
+        f"Audience segment: {segment}. {SEGMENTS[segment]['notes']}\n"
         f"Assigned hook: {hook_key}. Angle: {hook['angle']}\n"
         f"Style reference for the hook (do not copy): {hook['example']}"
     )
@@ -106,6 +111,7 @@ def generate_post(topic, hook_key, max_attempts=4):
                 raise ValueError(f"compliance patterns matched: {issues}")
             post["hook"] = hook_key
             post["topic"] = topic
+            post["segment"] = segment
             return post
         except (ValueError, KeyError, json.JSONDecodeError) as e:
             last_error = e
