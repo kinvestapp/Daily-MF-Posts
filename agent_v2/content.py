@@ -24,6 +24,8 @@ HARD RULES (never break):
   and be labelled 'For illustration only'. Never show growth/return figures.
 - Never claim that anything is 'compliant with', 'approved by', 'endorsed by' or 'regulated by' any authority except the plain
   fact 'AMFI-registered Mutual Fund Distributor'. No words like 'trusted', 'safe', 'secure', 'permanent' or 'risk-free'.
+- Tax and legal explanations stay generic and factual. FATCA is a US law; most other countries use a similar self-declaration called CRS.
+  Say only that investors may need to declare their tax residency, never describe agreements between governments or promise outcomes.
 - Use the Indian rupee sign as the single character used for rupees, and Indian number grouping (6,00,000 or 6 lakh).
 
 OUTPUT: ONLY a raw JSON object (no markdown fences, no commentary), exactly this shape:
