@@ -1,0 +1,40 @@
+{
+  "hook": "belief",
+  "topic": "Active vs passive funds, explained simply",
+  "segment": "south_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "ACTIVE VS PASSIVE",
+      "headline": "Which fund style fits your plan?",
+      "subhead": "One picks stocks, one tracks the index. Both have a role.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Two approaches, same goal",
+      "points": [
+        {
+          "title": "Active funds",
+          "text": "A manager selects stocks, trying to match or outperform an index."
+        },
+        {
+          "title": "Passive funds",
+          "text": "Follow an index like Sensex or Nifty, holding all or most stocks in it."
+        },
+        {
+          "title": "Your choice",
+          "text": "Consider costs, your belief in active management, and your time horizon."
+        }
+      ],
+      "icon": "cap"
+    },
+    {
+      "kind": "cta",
+      "headline": "Learn more at your pace",
+      "cta": "Save this for your next fund review",
+      "footnote": "AMFI-registered Mutual Fund Distributor."
+    }
+  ],
+  "caption": "Active funds employ a manager to pick stocks; passive funds replicate an index. Both serve long-term investors with different philosophies. Neither approach is inherently superior, and costs matter. Choose what aligns with your belief and goals. #FundBasics #ActiveVsPassive #MutualFundEducation #InvestingSimplified #YourChoice"
+}

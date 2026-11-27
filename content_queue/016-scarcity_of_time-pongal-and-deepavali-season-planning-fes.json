@@ -1,0 +1,40 @@
+{
+  "hook": "scarcity_of_time",
+  "topic": "Pongal and Deepavali season: planning festival spending without derailing your SIP",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "FESTIVAL SEASON MONEY",
+      "headline": "Plan your festival spend without pausing growth.",
+      "subhead": "Time spent planning is time saved on stress later.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Celebrate and invest both",
+      "points": [
+        {
+          "title": "Set a festival budget",
+          "text": "Decide how much for Pongal and Deepavali from your salary, separately."
+        },
+        {
+          "title": "Keep SIP on track",
+          "text": "Your regular monthly contribution to mutual funds stays separate from festival spending."
+        },
+        {
+          "title": "Review if needed",
+          "text": "If cash is tight one month, you can pause or adjust your SIP temporarily."
+        }
+      ],
+      "icon": "coin"
+    },
+    {
+      "kind": "cta",
+      "headline": "Build a simple festival plan",
+      "cta": "Follow for one simple money idea a day",
+      "footnote": "Mutual fund investments are subject to market risks. AMFI-registered Mutual Fund Distributor."
+    }
+  ],
+  "caption": "Festival spending and regular investing can coexist when you plan ahead. Set aside what you need for Pongal or Deepavali, then continue your SIP with clarity. A few minutes of budgeting today removes guesswork later. #FestivalPlanning #SIPSmarts #MoneyManagement #PongalSeason #SmartSaving"
+}

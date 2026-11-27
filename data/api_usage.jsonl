@@ -1,0 +1,3 @@
+{"ts": "2026-11-27T02:31:39.121165+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 1247, "output_tokens": 869, "est_usd": 0.00559}
+{"ts": "2026-11-27T02:31:42.368755+00:00", "model": "claude-sonnet-5-5", "purpose": "planner-review", "input_tokens": 834, "output_tokens": 274, "est_usd": 0.00661}
+{"ts": "2026-11-27T02:31:50.375531+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 1454, "output_tokens": 803, "est_usd": 0.00547}
