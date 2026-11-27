@@ -1,0 +1,29 @@
+name: collect-insights
+
+# Read-only: pulls Instagram/Facebook performance for published v2 posts at 24h / 72h / 7d.
+on:
+  schedule:
+    - cron: '30 5 * * *'   # daily, after the morning post has had time to collect data
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Collect insights
+        run: python -m agent_v2.insights
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      - name: Commit metrics log
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Insights snapshot (agent v2)"
+          file_pattern: "data/metrics.jsonl"
