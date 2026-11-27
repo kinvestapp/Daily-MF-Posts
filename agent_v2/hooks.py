@@ -56,6 +56,10 @@ HOOKS = {
         "angle": "Soft FOMO: the cost of starting late versus early, shown as a neutral illustration.",
         "example": "Starting at 25 vs 35: what ten extra years of time can do.",
     },
+    "community_fomo": {
+        "angle": "Positive FOMO through belonging: neighbours, colleagues and families in your city already keep a small monthly habit, and the door is open to join them. Invitation, never pressure: no urgency, no 'you are falling behind', no invented numbers or testimonials.",
+        "example": "Chennai families are quietly building a monthly habit. Your seat at the table is open.",
+    },
     "myth_buster": {
         "angle": "Contrarian but kind: gently correct a common misconception. Never attack named AMCs or competitors.",
         "example": "Myth: you need a lot of money to start. Reality: you need a habit.",
@@ -70,13 +74,17 @@ HOOKS = {
     },
 }
 
+# Owner priority: emotional hooks of belonging and (positive) FOMO get the most airtime until real data says otherwise.
+# Used as sampling weights when the strategist is rotating or exploring; exploitation is driven by measured results.
+HOOK_PRIOR = {"community_fomo": 4, "belonging": 4, "start_early": 3, "hope": 2, "empathy": 2, "pride": 2, "nostalgia": 2}
+
 # Audience segments, in the owner's priority order. The weight is the share of posts aimed at each.
 # Content is mainly for domestic investors; NRIs are welcome but secondary.
 SEGMENTS = {
-    "chennai_tn": {"weight": 35, "notes": "Chennai and Tamil Nadu families: salaried professionals, small business owners, first-time investors. Relatable local life (family goals, school and college fees, weddings, house, festivals like Pongal and Deepavali, traditional savings such as gold, chit funds, FDs, LIC). Warm, respectful, never stereotyping."},
-    "south_india": {"weight": 25, "notes": "South India (Karnataka, Kerala, Andhra, Telangana): similar family-goal framing, neutral language, no region-specific stereotypes."},
-    "north_india": {"weight": 25, "notes": "North India: family goals, business families, festival and wedding-season planning (Diwali, weddings), neutral language."},
-    "nri": {"weight": 15, "notes": "NRIs and overseas Indians (including Nordics, Gulf, US, UK) investing in India. KYC and FATCA basics, investing from abroad. Only explain the process; never claim legal or regulatory approval."},
+    "chennai_tn": {"weight": 70, "notes": "Chennai and Tamil Nadu families: salaried professionals, small business owners, first-time investors. Relatable local life (family goals, school and college fees, weddings, house, festivals like Pongal and Deepavali, traditional savings such as gold, chit funds, FDs, LIC). Warm, respectful, never stereotyping."},
+    "south_india": {"weight": 12, "notes": "South India (Karnataka, Kerala, Andhra, Telangana): similar family-goal framing, neutral language, no region-specific stereotypes."},
+    "north_india": {"weight": 14, "notes": "North India: family goals, business families, festival and wedding-season planning (Diwali, weddings), neutral language."},
+    "nri": {"weight": 4, "notes": "NRIs and overseas Indians (including Nordics, Gulf, US, UK) investing in India. KYC and FATCA basics, investing from abroad. Only explain the process; never claim legal or regulatory approval."},
 }
 
 # (topic, segment). Education only, never scheme specific.
@@ -87,6 +95,12 @@ TOPICS = [
     ("Pongal and Deepavali season: planning festival spending without derailing your SIP", "chennai_tn"),
     ("Traditional savings (gold, chits, FDs, LIC) and where mutual funds can fit, explained neutrally", "chennai_tn"),
     ("First salary: a calm 3-step money routine (emergency fund, SIP, insurance review)", "chennai_tn"),
+    ("Neighbourhood habits: how Chennai families keep a small monthly SIP going alongside rent, school fees and EMIs", "chennai_tn"),
+    ("Salaried in OMR, Guindy or Ambattur: a simple monthly money routine on payday", "chennai_tn"),
+    ("Women of the family leading household money goals, explained respectfully", "chennai_tn"),
+    ("Planning a child's college admission and fees years ahead, goal by goal", "chennai_tn"),
+    ("Small shop and business owners in Chennai: keeping a personal SIP separate from business cash", "chennai_tn"),
+    ("Parents' health and retirement: building a calm plan step by step", "chennai_tn"),
     ("Rupee cost averaging in plain words", "south_india"),
     ("Expense ratio and why costs matter", "south_india"),
     ("Active vs passive funds, explained simply", "south_india"),

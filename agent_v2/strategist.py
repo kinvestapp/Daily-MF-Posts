@@ -9,7 +9,7 @@ import json
 import random
 from pathlib import Path
 
-from .hooks import HOOKS, SEGMENTS, TOPICS
+from .hooks import HOOK_PRIOR, HOOKS, SEGMENTS, TOPICS
 
 ROOT = Path(__file__).resolve().parent.parent
 METRICS = ROOT / "data" / "metrics.jsonl"
@@ -72,11 +72,11 @@ def plan(n, recent_hooks, recent_topics, rng=None):
     for seg in slots:
         if cold:
             pool = [h for h in HOOKS if h not in used_hooks[-7:]] or list(HOOKS)
-            hook, mode = rng.choice(pool), "rotate"
+            hook, mode = rng.choices(pool, weights=[HOOK_PRIOR.get(x, 1) for x in pool])[0], "rotate"
         elif rng.random() < EXPLORE_SHARE:
             least = min(seen_count[h] for h in HOOKS if h not in used_hooks[-3:] or len(HOOKS) < 5)
             pool = [h for h in HOOKS if seen_count[h] == least and h not in used_hooks[-3:]] or list(HOOKS)
-            hook, mode = rng.choice(pool), "explore"
+            hook, mode = rng.choices(pool, weights=[HOOK_PRIOR.get(x, 1) for x in pool])[0], "explore"
         else:
             pool = [h for h in top if h not in used_hooks[-2:]] or top
             hook, mode = rng.choice(pool), "exploit"
