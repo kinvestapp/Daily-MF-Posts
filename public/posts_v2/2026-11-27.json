@@ -1,51 +1,51 @@
 {
   "date": "2026-11-27",
-  "hook": "belief",
-  "topic": "NRI basics: what FATCA means in plain words",
-  "segment": "nri",
+  "hook": "authority",
+  "topic": "Common mutual fund myths",
+  "segment": "north_india",
   "slides": [
     {
       "kind": "hook",
-      "kicker": "NRI INVESTING",
-      "headline": "Real wealth grows when nobody's watching.",
-      "subhead": "Discipline through paperwork is what separates serious investors from the rest.",
-      "icon": "growth"
+      "kicker": "MYTH VS FACT",
+      "headline": "What mutual funds actually are—no jargon",
+      "subhead": "Five minutes to understand how your money pools with others.",
+      "icon": "cap"
     },
     {
       "kind": "value",
-      "title": "FATCA: What it means for you",
+      "title": "Three big myths, cleared up",
       "points": [
         {
-          "title": "What FATCA is",
-          "text": "An agreement between India and your country to share tax resident information transparently."
+          "title": "Only rich invest",
+          "text": "Start with ₹500 or less. No wealth minimum required."
         },
         {
-          "title": "Why you fill forms",
-          "text": "You declare tax residency once so both governments know you're investing transparently from abroad."
+          "title": "Funds lock money",
+          "text": "Most let you withdraw whenever you need it back."
         },
         {
-          "title": "Your part",
-          "text": "Tell the truth about where you live and pay taxes. Then invest normally."
+          "title": "Stock funds gamble",
+          "text": "Professional managers research and monitor picks full-time for you."
         }
       ],
       "icon": "shield"
     },
     {
       "kind": "cta",
-      "headline": "Build your India portfolio with clarity.",
-      "cta": "Save this guide for your next investment conversation.",
-      "footnote": "K-Invest.app is an AMFI-registered Mutual Fund Distributor."
+      "headline": "Myth-busting saved? Share it",
+      "cta": "Save this for your next family money chat",
+      "footnote": "Learn one concept at a time, at your pace."
     }
   ],
-  "caption": "NRI investing means working within systems that protect everyone. FATCA paperwork is not a barrier—it's proof you're doing it right. The boring months of compliance are exactly when wealth is built. #NRIInvesting #FATCABasics #PatientWealth #InvestInIndia #DisciplinedInvestor",
-  "caption_full": "NRI investing means working within systems that protect everyone. FATCA paperwork is not a barrier—it's proof you're doing it right. The boring months of compliance are exactly when wealth is built. #NRIInvesting #FATCABasics #PatientWealth #InvestInIndia #DisciplinedInvestor\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
+  "caption": "Mutual funds work by pooling money from many investors to buy stocks and bonds. A fund manager picks and monitors holdings. You own units, not individual stocks. #MutualFundMyths #InvestingBasics #MoneyTalk #KInvest #ClearandSimple",
+  "caption_full": "Mutual funds work by pooling money from many investors to buy stocks and bonds. A fund manager picks and monitors holdings. You own units, not individual stocks. #MutualFundMyths #InvestingBasics #MoneyTalk #KInvest #ClearandSimple\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
   "images": [
     "public/posts_v2/2026-11-27/2026-11-27-1.jpg",
     "public/posts_v2/2026-11-27/2026-11-27-2.jpg",
     "public/posts_v2/2026-11-27/2026-11-27-3.jpg"
   ],
   "format": "carousel_3",
-  "reel": null,
-  "reel_audio": null,
+  "reel": "public/posts_v2/2026-11-27/reel.mp4",
+  "reel_audio": "steady-habit.m4a",
   "published": {}
 }
