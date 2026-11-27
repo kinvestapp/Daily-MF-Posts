@@ -18,6 +18,7 @@ REVIEW_MODELS = [os.environ.get("REVIEW_MODEL", "claude-haiku-4-5-20251001")]
 
 _calls_this_run = 0
 _client = None
+_thinking_off = True
 
 
 class BudgetExceeded(RuntimeError):
@@ -78,8 +79,19 @@ def call(models, system, messages, max_tokens, purpose):
     last = None
     for model in models:
         _check_limits()
+        kwargs = dict(model=model, max_tokens=max_tokens, system=system, messages=messages)
+        if _thinking_off:
+            kwargs["thinking"] = {"type": "disabled"}   # plain writing/review tasks: do not pay for extended thinking
         try:
-            msg = _get_client().messages.create(model=model, max_tokens=max_tokens, system=system, messages=messages)
+            try:
+                msg = _get_client().messages.create(**kwargs)
+            except Exception as e:
+                if "thinking" in kwargs and getattr(e, "status_code", None) == 400 and "thinking" in str(e).lower():
+                    print("[llm] model does not accept thinking=disabled; retrying without it")
+                    kwargs.pop("thinking")
+                    msg = _get_client().messages.create(**kwargs)
+                else:
+                    raise
         except Exception as e:  # unknown model id -> try the next one; anything else is a real error
             if getattr(e, "status_code", None) == 404:
                 print(f"[llm] model {model} not available, trying next")
@@ -89,5 +101,6 @@ def call(models, system, messages, max_tokens, purpose):
         _calls_this_run += 1
         row = _log(model, purpose, msg.usage.input_tokens, msg.usage.output_tokens)
         print(f"[llm] {purpose}: {model} in={row['input_tokens']} out={row['output_tokens']} ~${row['est_usd']:.4f} (month ~${month_spend():.2f})")
-        return msg.content[0].text
+        # newer models may return thinking blocks first: keep only the text blocks
+        return "".join(getattr(b, "text", "") for b in msg.content if getattr(b, "type", "text") == "text")
     raise RuntimeError(f"no usable model among {models}: {last}")
