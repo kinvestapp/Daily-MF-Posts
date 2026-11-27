@@ -35,7 +35,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Daily carousel (agent v2)"
-          file_pattern: "public/posts_v2/**"
+          file_pattern: "public/posts_v2/*.json public/posts_v2/*/*.jpg"
 
       - name: Publish carousel to Instagram + Facebook
         if: ${{ inputs.publish }}

@@ -29,28 +29,28 @@ HOOKS = {
         "example": "'I'll start my SIP next month' (said every month).",
     },
     "empathy": {
-        "angle": "Acknowledge the real complexity NRIs face: two countries, taxes, paperwork. Normalise it.",
-        "example": "Sending money home and juggling two tax systems is confusing. That is normal.",
+        "angle": "Acknowledge real money worries families share (rising costs, EMIs, school fees, parents' health) and show a calm first step. Normalise it.",
+        "example": "Juggling EMIs, school fees and savings is hard. Starting small is still starting.",
     },
     "belonging": {
-        "angle": "Community of Indians in the Nordics building wealth patiently. No fake numbers or testimonials.",
-        "example": "Thousands of Indians abroad invest a little every month. You can too.",
+        "angle": "Families across Tamil Nadu and India building wealth patiently, one SIP at a time. No fake numbers or testimonials.",
+        "example": "Families across India invest a little every month. You can too.",
     },
     "nostalgia": {
         "angle": "Our parents' savings habits, and what today's options add on top.",
-        "example": "Our parents saved. Our generation can invest, patiently.",
+        "example": "Our parents saved in gold, chits and FDs. Our generation can add patient investing.",
     },
     "pride": {
-        "angle": "You built a life abroad; let your savings grow back home too.",
-        "example": "You built a life abroad. Your savings can grow back home too.",
+        "angle": "Pride in building for your family: your first salary, your first SIP, your first goal.",
+        "example": "Your first salary, your first SIP, your first goal: all yours.",
     },
     "authority": {
         "angle": "Plain-language expert explanation of how something works; credibility through clarity.",
         "example": "Expense ratio explained in 20 seconds.",
     },
     "relief": {
-        "angle": "Remove a pain: paperwork, jargon, uncertainty. Show how simple the first step is.",
-        "example": "KYC, FATCA and SIP set-up without the paperwork maze.",
+        "angle": "Remove a pain: paperwork, jargon, uncertainty. Show how simple the first step is (KYC, SIP set-up).",
+        "example": "KYC and SIP set-up, explained without the jargon.",
     },
     "start_early": {
         "angle": "Soft FOMO: the cost of starting late versus early, shown as a neutral illustration.",
@@ -70,20 +70,35 @@ HOOKS = {
     },
 }
 
-# Topics the content engine can rotate through (education only, never scheme specific).
+# Audience segments, in the owner's priority order. The weight is the share of posts aimed at each.
+# Content is mainly for domestic investors; NRIs are welcome but secondary.
+SEGMENTS = {
+    "chennai_tn": {"weight": 35, "notes": "Chennai and Tamil Nadu families: salaried professionals, small business owners, first-time investors. Relatable local life (family goals, school and college fees, weddings, house, festivals like Pongal and Deepavali, traditional savings such as gold, chit funds, FDs, LIC). Warm, respectful, never stereotyping."},
+    "south_india": {"weight": 25, "notes": "South India (Karnataka, Kerala, Andhra, Telangana): similar family-goal framing, neutral language, no region-specific stereotypes."},
+    "north_india": {"weight": 25, "notes": "North India: family goals, business families, festival and wedding-season planning (Diwali, weddings), neutral language."},
+    "nri": {"weight": 15, "notes": "NRIs and overseas Indians (including Nordics, Gulf, US, UK) investing in India. KYC and FATCA basics, investing from abroad. Only explain the process; never claim legal or regulatory approval."},
+}
+
+# (topic, segment). Education only, never scheme specific.
 TOPICS = [
-    "SIP basics and the power of compounding",
-    "Rupee cost averaging in plain words",
-    "Goal-based investing: education, home, retirement, wedding",
-    "Starting small: Rs 500 or Rs 1,000 a month",
-    "Emergency fund before investing",
-    "Expense ratio and why costs matter",
-    "Active vs passive funds, explained simply",
-    "Staying invested through market ups and downs",
-    "Common mutual fund myths",
-    "NRI basics: KYC, FATCA and investing from the Nordics",
-    "Asset allocation in one minute",
-    "Review vs react: how to check your portfolio calmly",
+    ("SIP basics: what a SIP is and why monthly habits matter", "chennai_tn"),
+    ("Starting small: Rs 500 or Rs 1,000 a month", "chennai_tn"),
+    ("Goal-based investing: child's education, house, wedding, retirement", "chennai_tn"),
+    ("Pongal and Deepavali season: planning festival spending without derailing your SIP", "chennai_tn"),
+    ("Traditional savings (gold, chits, FDs, LIC) and where mutual funds can fit, explained neutrally", "chennai_tn"),
+    ("First salary: a calm 3-step money routine (emergency fund, SIP, insurance review)", "chennai_tn"),
+    ("Rupee cost averaging in plain words", "south_india"),
+    ("Expense ratio and why costs matter", "south_india"),
+    ("Active vs passive funds, explained simply", "south_india"),
+    ("Staying invested through market ups and downs", "south_india"),
+    ("Small business owners: separating business cash from personal investing", "south_india"),
+    ("Wedding and festival season: goal-based saving for family events", "north_india"),
+    ("Common mutual fund myths", "north_india"),
+    ("Emergency fund before investing", "north_india"),
+    ("Asset allocation in one minute", "north_india"),
+    ("Review vs react: how to check your portfolio calmly", "north_india"),
+    ("NRI basics: KYC and investing in India from abroad", "nri"),
+    ("NRI basics: what FATCA means in plain words", "nri"),
 ]
 
 
@@ -101,8 +116,11 @@ def pick_hook(history=None, rng=None):
 
 
 def pick_topic(history=None, rng=None):
+    """Weighted by audience segment, avoiding recently used topics. Returns (topic, segment)."""
     rng = rng or random.Random()
     history = history or []
-    recent = history[-6:]
-    pool = [t for t in TOPICS if t not in recent] or TOPICS
-    return rng.choice(pool)
+    recent = set(history[-8:])
+    seg_names = list(SEGMENTS)
+    seg = rng.choices(seg_names, weights=[SEGMENTS[s]["weight"] for s in seg_names])[0]
+    pool = [t for t, s in TOPICS if s == seg and t not in recent] or [t for t, s in TOPICS if s == seg]
+    return rng.choice(pool), seg
