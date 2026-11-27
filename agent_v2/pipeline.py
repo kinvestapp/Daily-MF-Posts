@@ -106,6 +106,12 @@ def main():
         "published": {},
     }
     OUT.mkdir(parents=True, exist_ok=True)
+    prev = OUT / f"{date_str}.json"
+    if prev.exists():   # a re-run on the same day must remember what was already published
+        try:
+            meta["published"] = json.load(open(prev, encoding="utf-8")).get("published", {}) or {}
+        except (ValueError, OSError):
+            pass
     with open(OUT / f"{date_str}.json", "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
     print(f"Generated {len(rel)} slides for {date_str} (hook={meta['hook']}): {rel}")

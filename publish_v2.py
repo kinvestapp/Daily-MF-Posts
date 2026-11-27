@@ -74,42 +74,66 @@ def main():
         if not wait_for_url(u):
             raise RuntimeError(f"image not reachable: {u}")
 
-    # --- Instagram carousel ---
-    children = []
-    for u in urls:
-        r = requests.post(f"{API}/{ig_id}/media", data={"image_url": u, "is_carousel_item": "true", "access_token": token}).json()
-        if "id" not in r:
-            raise RuntimeError(f"IG child container failed: {r}")
-        children.append(r["id"])
-    for c in children:
-        if not wait_ready(c, token):
-            raise RuntimeError(f"IG child {c} never finished")
-    parent = requests.post(f"{API}/{ig_id}/media", data={
-        "media_type": "CAROUSEL", "children": ",".join(children), "caption": caption, "access_token": token}).json()
-    if "id" not in parent:
-        raise RuntimeError(f"IG carousel container failed: {parent}")
-    if not wait_ready(parent["id"], token):
-        raise RuntimeError("IG carousel never finished")
-    ig = requests.post(f"{API}/{ig_id}/media_publish", data={"creation_id": parent["id"], "access_token": token}).json()
-    print("IG:", ig)
-    meta["published"]["instagram_media_id"] = ig.get("id")
+    def save():
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2, ensure_ascii=False)
 
-    # --- Facebook multi-photo post ---
-    photo_ids = []
-    for u in urls:
-        r = requests.post(f"{API}/{page_id}/photos", data={"url": u, "published": "false", "access_token": token}).json()
-        if "id" not in r:
-            raise RuntimeError(f"FB photo upload failed: {r}")
-        photo_ids.append(r["id"])
-    payload = {"message": caption, "access_token": token}
-    for i, pid in enumerate(photo_ids):
-        payload[f"attached_media[{i}]"] = json.dumps({"media_fbid": pid})
-    fb = requests.post(f"{API}/{page_id}/feed", data=payload).json()
-    print("FB:", fb)
-    meta["published"]["facebook_post_id"] = fb.get("id")
+    pub = meta["published"]
 
-    meta["published"]["published_at"] = datetime.datetime.utcnow().isoformat() + "Z"
-    with open(meta_path, "w", encoding="utf-8") as f:   # save carousel ids before attempting the Reel
+    # --- Instagram carousel (skipped if an earlier run of the day already published it) ---
+    if pub.get("instagram_media_id"):
+        print("IG carousel already published:", pub["instagram_media_id"])
+    else:
+        children = []
+        for u in urls:
+            r = requests.post(f"{API}/{ig_id}/media", data={"image_url": u, "is_carousel_item": "true", "access_token": token}).json()
+            if "id" not in r:
+                raise RuntimeError(f"IG child container failed: {r}")
+            children.append(r["id"])
+        for c in children:
+            if not wait_ready(c, token):
+                raise RuntimeError(f"IG child {c} never finished")
+        parent = requests.post(f"{API}/{ig_id}/media", data={
+            "media_type": "CAROUSEL", "children": ",".join(children), "caption": caption, "access_token": token}).json()
+        if "id" not in parent:
+            raise RuntimeError(f"IG carousel container failed: {parent}")
+        if not wait_ready(parent["id"], token):
+            raise RuntimeError("IG carousel never finished")
+        ig = requests.post(f"{API}/{ig_id}/media_publish", data={"creation_id": parent["id"], "access_token": token}).json()
+        print("IG:", ig)
+        pub["instagram_media_id"] = ig.get("id")
+        save()   # record the id immediately so a later failure can never cause a duplicate post
+
+    # --- Facebook multi-photo post (needs the PAGE token, derived from the system-user token) ---
+    if pub.get("facebook_post_id"):
+        print("FB post already published:", pub["facebook_post_id"])
+    else:
+        try:
+            pt = requests.get(f"{API}/{page_id}", params={"fields": "access_token", "access_token": token}).json()
+            page_token = pt.get("access_token")
+            if not page_token:
+                raise RuntimeError(f"could not get page token: {pt}")
+            photo_ids = []
+            for u in urls:
+                r = requests.post(f"{API}/{page_id}/photos", data={"url": u, "published": "false", "access_token": page_token}).json()
+                if "id" not in r:
+                    raise RuntimeError(f"FB photo upload failed: {r}")
+                photo_ids.append(r["id"])
+            payload = {"message": caption, "access_token": page_token}
+            for i, pid in enumerate(photo_ids):
+                payload[f"attached_media[{i}]"] = json.dumps({"media_fbid": pid})
+            fb = requests.post(f"{API}/{page_id}/feed", data=payload).json()
+            print("FB:", fb)
+            if "id" not in fb:
+                raise RuntimeError(f"FB feed post failed: {fb}")
+            pub["facebook_post_id"] = fb["id"]
+        except Exception as e:   # Facebook trouble must not block the Reel
+            print("Facebook failed:", e)
+            pub["facebook_error"] = str(e)[:300]
+        save()
+
+    pub["published_at"] = datetime.datetime.utcnow().isoformat() + "Z"
+    with open(meta_path, "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
 
     # --- Instagram Reel (a failure here must not undo the carousel) ---
