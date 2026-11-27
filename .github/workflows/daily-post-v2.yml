@@ -63,7 +63,7 @@ jobs:
           PUBLISH_BRANCH: ${{ github.ref_name }}
 
       - name: Save publish ids back to the repo
-        if: ${{ inputs.publish }}
+        if: ${{ always() && inputs.publish }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Record published media ids (agent v2)"
