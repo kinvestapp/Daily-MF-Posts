@@ -1,0 +1,87 @@
+"""Agent v2 daily pipeline: pick hook/topic -> write -> lint -> render -> QA -> save.
+
+Usage:
+  python -m agent_v2.pipeline              # real run (needs ANTHROPIC_API_KEY)
+  python -m agent_v2.pipeline --sample     # offline: render the fixture post (no API calls)
+"""
+import argparse
+import datetime
+import glob
+import json
+import os
+import shutil
+from pathlib import Path
+
+from .content import generate_post
+from .hooks import pick_hook, pick_topic
+from .render import render_slides
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "public" / "posts_v2"
+CAPTION_FOOTER = (
+    "\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | "
+    "Mutual Fund investments are subject to market risks, read all scheme related documents carefully"
+)
+MAX_RENDER_ATTEMPTS = 3
+
+
+def load_history():
+    hooks, topics = [], []
+    for f in sorted(glob.glob(str(OUT / "*.json"))):
+        try:
+            d = json.load(open(f, encoding="utf-8"))
+            hooks.append(d.get("hook"))
+            topics.append(d.get("topic"))
+        except (OSError, json.JSONDecodeError):
+            continue
+    return hooks, topics
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--sample", action="store_true")
+    ap.add_argument("--date", default=datetime.date.today().isoformat())
+    args = ap.parse_args()
+
+    date_str = args.date
+    day_dir = OUT / date_str
+    if day_dir.exists():
+        shutil.rmtree(day_dir)
+
+    hook_hist, topic_hist = load_history()
+    hook_key, topic = pick_hook(hook_hist), pick_topic(topic_hist)
+
+    post, paths, issues = None, [], ["not started"]
+    for attempt in range(1, MAX_RENDER_ATTEMPTS + 1):
+        if args.sample:
+            post = json.load(open(ROOT / "agent_v2" / "fixtures" / "sample_post.json", encoding="utf-8"))
+        else:
+            post = generate_post(topic, hook_key)
+        paths, issues = render_slides(post, day_dir, date_str)
+        if not issues:
+            break
+        print(f"[qa] attempt {attempt} failed: {issues}")
+        shutil.rmtree(day_dir, ignore_errors=True)
+    if issues:
+        raise RuntimeError(f"Quality gate failed after {MAX_RENDER_ATTEMPTS} attempts: {issues}")
+
+    rel = [str(Path(p).relative_to(ROOT)) for p in paths]
+    meta = {
+        "date": date_str,
+        "hook": post.get("hook", hook_key),
+        "topic": post.get("topic", topic),
+        "slides": post["slides"],
+        "caption": post["caption"],
+        "caption_full": post["caption"] + CAPTION_FOOTER,
+        "images": rel,
+        "format": "carousel_3",
+        "published": {},
+    }
+    OUT.mkdir(parents=True, exist_ok=True)
+    with open(OUT / f"{date_str}.json", "w", encoding="utf-8") as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
+    print(f"Generated {len(rel)} slides for {date_str} (hook={meta['hook']}): {rel}")
+
+
+if __name__ == "__main__":
+    main()

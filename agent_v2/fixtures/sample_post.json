@@ -1,0 +1,14 @@
+{
+  "hook": "hope",
+  "topic": "Starting small: Rs 500 or Rs 1,000 a month",
+  "slides": [
+    {"kind": "hook", "kicker": "SIP basics", "headline": "Your future self is quietly grateful for today's SIP", "subhead": "Small monthly steps, repeated patiently, are how long-term habits are built.", "icon": "growth"},
+    {"kind": "value", "title": "Why starting small still counts", "icon": "clock", "points": [
+      {"title": "Time does the heavy lifting", "text": "The earlier you start, the longer your money has to stay invested."},
+      {"title": "Habit beats amount", "text": "A fixed ₹1,000 every month builds discipline you can grow into."},
+      {"title": "Your own money adds up", "text": "₹5,000 × 12 × 10 years = ₹6,00,000 invested. For illustration only."}
+    ]},
+    {"kind": "cta", "headline": "Start small. Stay consistent. Think long-term", "cta": "Save this for your next SIP review", "footnote": "For illustration only. Not an offer or advice on any scheme."}
+  ],
+  "caption": "Starting small is still starting. A fixed amount every month builds the habit that long-term investing needs. #SIP #MutualFunds #NRIInvesting #WealthHabits #K_Invest"
+}
