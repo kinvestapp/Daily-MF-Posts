@@ -32,9 +32,12 @@ jobs:
       - name: Generate 3-slide carousel (hook -> write -> lint -> render -> QA)
         run: python -m agent_v2.pipeline
         env:
-          # queue = use pre-written posts from content_queue/ only. No Anthropic API calls, no credits.
-          # To let the agent write its own posts later, set this to auto and add ANTHROPIC_API_KEY back.
-          CONTENT_SOURCE: queue
+          # auto = take the next post from content_queue/ (no API call). Only if the queue is empty does it
+          # write ONE post with the API, capped at 2 calls.
+          CONTENT_SOURCE: auto
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_API_CALLS_PER_RUN: "2"
+          MONTHLY_BUDGET_USD: "3"
 
       - name: Keep the Reel for review (download from the run page)
         uses: actions/upload-artifact@v4
@@ -47,7 +50,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Daily carousel (agent v2)"
-          file_pattern: "public/posts_v2/*.json public/posts_v2/*/*.jpg"
+          file_pattern: "public/posts_v2/*.json public/posts_v2/*/*.jpg data/api_usage.jsonl"
 
       - name: Publish carousel to Instagram + Facebook
         if: ${{ inputs.publish }}

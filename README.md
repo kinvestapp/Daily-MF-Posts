@@ -20,9 +20,9 @@ Offline preview (no API keys): `python -m agent_v2.pipeline --sample`
 
 Roadmap: Phase 2 insights logging, Phase 3 learner/strategist, Phase 4 Reel + royalty-free audio, Phase 5 trend scan.
 
-## Content queue (no API credits)
-`content_queue/*.json` holds pre-written, pre-validated posts (hook, topic, segment, 3 slides, caption).
-The v2 workflow runs with `CONTENT_SOURCE=queue`, so it makes no Anthropic API calls. Posts are used in filename
-order; a post counts as used once a `public/posts_v2/<date>.json` records its `queue_id`.
-Refill by asking Claude to write the next batch (each file is checked against the length limits and the compliance linter),
-or set `CONTENT_SOURCE=auto` and add `ANTHROPIC_API_KEY` to let the agent write posts itself (billed separately by Anthropic).
+## How the agent runs (conservative on API credits)
+- **Daily** (`daily-post-v2.yml`): takes the next post from `content_queue/` and publishes it. No API call. Only if the queue is empty does it write one post (max 2 calls).
+- **Weekly** (`weekly-planner.yml`): the strategist (plain code) reads `data/metrics.jsonl`, ranks hooks by score per 1,000 reached and plans the next 7 posts (70% best hooks, 30% new tests). One call writes the batch, one cheap call reviews it, one call rewrites only failures. At most 3 calls.
+- **Guardrails** (`agent_v2/llm.py`): per-run call cap, monthly budget cap (`MONTHLY_BUDGET_USD`, default $3, estimated from reported tokens), every call logged in `data/api_usage.jsonl`. Check real spend in the Anthropic Console.
+- **Models**: writer `WRITER_MODEL` (default Sonnet, falls back to Haiku), reviewer `REVIEW_MODEL` (default Haiku).
+- Posts in `content_queue/*.json` are used in filename order; a post counts as used once `public/posts_v2/<date>.json` records its `queue_id`.

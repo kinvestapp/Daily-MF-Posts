@@ -34,6 +34,8 @@ BANNED_PATTERNS = [
     r"\btrusted (platform|partner|advis|choice)",
     r"\b(100%|completely|totally) (safe|secure)\b",
     r"\bpermanent\b",
+    # House style: no em or en dashes (they render awkwardly in headlines).
+    r"[\u2014\u2013]",
 ]
 
 REQUIRED_FOOTER = [

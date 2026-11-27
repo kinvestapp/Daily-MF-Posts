@@ -1,0 +1,40 @@
+name: weekly-planner
+
+# The agent's weekly step: read results, plan the next posts, write + review them, refill content_queue/.
+# At most 3 API calls per run, and a monthly budget cap (see agent_v2/llm.py). Daily posts then use the queue with no API call.
+on:
+  schedule:
+    - cron: '0 11 * * 0'   # Sundays, 16:30 IST
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many posts to write"
+        default: "7"
+      force:
+        description: "Write a batch even if the queue is not running low"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install anthropic
+      - name: Plan, write and review the next batch
+        run: python -m agent_v2.planner --count "${{ inputs.count || '7' }}" ${{ inputs.force && '--force' || '' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_API_CALLS_PER_RUN: "3"
+          MONTHLY_BUDGET_USD: "3"
+      - name: Commit the new posts, report and usage log
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Weekly planner: refill content queue"
+          file_pattern: "content_queue/*.json data/weekly_report.md data/api_usage.jsonl"
