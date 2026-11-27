@@ -1,0 +1,40 @@
+{
+  "hook": "relief",
+  "topic": "NRI basics: KYC and investing in India from abroad",
+  "segment": "nri",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NRI investing",
+      "headline": "Investing in India from abroad, made clearer",
+      "subhead": "Start with the basics: KYC, an NRE or NRO account, and your goals.",
+      "icon": "globe"
+    },
+    {
+      "kind": "value",
+      "title": "Three things to sort first",
+      "icon": "globe",
+      "points": [
+        {
+          "title": "KYC",
+          "text": "Complete the know-your-customer process as an NRI."
+        },
+        {
+          "title": "Bank account",
+          "text": "An NRE or NRO account is commonly used to invest."
+        },
+        {
+          "title": "Tax residency",
+          "text": "You may need to declare where you are tax resident."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Start with the paperwork, then the plan",
+      "cta": "Save this for your next India plan",
+      "footnote": "Rules differ by country. Check what applies to you."
+    }
+  ],
+  "caption": "Investing in India from abroad starts with a few basics: KYC, a suitable bank account and a clear goal. Get these in order and the rest becomes simpler. #NRIInvesting #InvestInIndia #KYC #MutualFunds #NRI"
+}

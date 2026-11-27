@@ -1,0 +1,40 @@
+{
+  "hook": "hope",
+  "topic": "Starting small: Rs 500 or Rs 1,000 a month",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SIP basics",
+      "headline": "Your future self will thank today's small SIP",
+      "subhead": "A fixed amount every month builds a habit that grows with you.",
+      "icon": "growth"
+    },
+    {
+      "kind": "value",
+      "title": "Why starting small still counts",
+      "icon": "clock",
+      "points": [
+        {
+          "title": "Time helps",
+          "text": "The earlier you begin, the longer your money can stay invested."
+        },
+        {
+          "title": "Habit over amount",
+          "text": "A steady monthly SIP builds discipline you can increase later."
+        },
+        {
+          "title": "Your money adds up",
+          "text": "₹1,000 × 12 months × 10 years = ₹1,20,000 invested. For illustration only."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Start small. Stay steady.",
+      "cta": "Save this for your next family money chat",
+      "footnote": "For illustration only. Not advice on any scheme."
+    }
+  ],
+  "caption": "Starting small is still starting. A fixed monthly SIP builds a habit that can grow as your income does. Begin with an amount that feels comfortable. #SIP #MutualFunds #StartSmall #Chennai #MoneyHabits"
+}

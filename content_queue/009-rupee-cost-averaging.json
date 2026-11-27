@@ -1,0 +1,40 @@
+{
+  "hook": "surprise_fact",
+  "topic": "Rupee cost averaging in plain words",
+  "segment": "south_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SIP mechanics",
+      "headline": "Same amount every month. Different units each time.",
+      "subhead": "Why a SIP buys more units when prices are lower.",
+      "icon": "growth"
+    },
+    {
+      "kind": "value",
+      "title": "Rupee cost averaging in plain words",
+      "icon": "clock",
+      "points": [
+        {
+          "title": "Fixed amount",
+          "text": "You invest the same rupees every month."
+        },
+        {
+          "title": "Prices change",
+          "text": "Lower prices buy more units. Higher prices buy fewer."
+        },
+        {
+          "title": "Smoother entry",
+          "text": "Spreading purchases over time means you need not time the market."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Let the calendar do the timing",
+      "cta": "Save this for your next SIP review",
+      "footnote": "This explains a method. It does not promise any result."
+    }
+  ],
+  "caption": "A SIP invests the same amount at regular intervals. When prices are lower you get more units, and when prices are higher you get fewer. That is rupee cost averaging. #RupeeCostAveraging #SIP #MutualFunds #InvestingBasics #SouthIndia"
+}

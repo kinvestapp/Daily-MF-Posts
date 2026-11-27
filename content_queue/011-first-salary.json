@@ -1,0 +1,40 @@
+{
+  "hook": "relief",
+  "topic": "First salary: a calm 3-step money routine (emergency fund, SIP, insurance review)",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "First salary",
+      "headline": "Your first salary deserves a simple plan",
+      "subhead": "Three calm steps are enough to begin.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Three steps for your first salary",
+      "icon": "calendar",
+      "points": [
+        {
+          "title": "Emergency fund",
+          "text": "Set aside a few months of expenses first."
+        },
+        {
+          "title": "Start a SIP",
+          "text": "Even a small monthly amount begins the habit."
+        },
+        {
+          "title": "Review insurance",
+          "text": "Check that health and life cover suit your family."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Three steps. One calm start.",
+      "cta": "Save this for a friend's first salary",
+      "footnote": "General education, not advice for any individual."
+    }
+  ],
+  "caption": "Your first salary is a great moment to build good habits. Build a small safety net, start a SIP, and check your insurance. Three calm steps are enough. #FirstSalary #MoneyHabits #SIP #Chennai #YoungInvestors"
+}

@@ -32,7 +32,9 @@ jobs:
       - name: Generate 3-slide carousel (hook -> write -> lint -> render -> QA)
         run: python -m agent_v2.pipeline
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # queue = use pre-written posts from content_queue/ only. No Anthropic API calls, no credits.
+          # To let the agent write its own posts later, set this to auto and add ANTHROPIC_API_KEY back.
+          CONTENT_SOURCE: queue
 
       - name: Keep the Reel for review (download from the run page)
         uses: actions/upload-artifact@v4

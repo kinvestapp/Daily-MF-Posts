@@ -1,0 +1,40 @@
+{
+  "hook": "myth_buster",
+  "topic": "Common mutual fund myths",
+  "segment": "north_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Myth vs fact",
+      "headline": "Three mutual fund myths, gently corrected",
+      "subhead": "Short answers for the questions families ask most.",
+      "icon": "shield"
+    },
+    {
+      "kind": "value",
+      "title": "Myth first. Then the fact.",
+      "icon": "shield",
+      "points": [
+        {
+          "title": "Myth: needs lakhs",
+          "text": "Fact: many SIPs start at a few hundred rupees a month."
+        },
+        {
+          "title": "Myth: money is stuck",
+          "text": "Fact: open-ended funds can be sold any day. Some have exit loads or lock-ins."
+        },
+        {
+          "title": "Myth: it is gambling",
+          "text": "Fact: funds follow a stated strategy and carry market risk."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Facts first. Then decide.",
+      "cta": "Save this for your next family chat",
+      "footnote": "Read all scheme related documents before investing."
+    }
+  ],
+  "caption": "Three common myths, three simple facts. Mutual funds are not only for the wealthy, and they are not a gamble, but they do carry market risk. Always read the scheme documents. #MutualFundMyths #InvestingBasics #MoneyFacts #India #FinancialLiteracy"
+}

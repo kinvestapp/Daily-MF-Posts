@@ -1,0 +1,40 @@
+{
+  "hook": "authority",
+  "topic": "Asset allocation in one minute",
+  "segment": "north_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Big picture",
+      "headline": "Do not keep all your eggs in one basket",
+      "subhead": "Asset allocation is simply how you divide your money.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Asset allocation in one minute",
+      "icon": "target",
+      "points": [
+        {
+          "title": "Different assets",
+          "text": "Equity, debt and gold each behave differently over time."
+        },
+        {
+          "title": "Match your goals",
+          "text": "Longer goals can hold more risk than shorter ones."
+        },
+        {
+          "title": "Revisit yearly",
+          "text": "Life changes, so check your split once a year."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Divide wisely. Review yearly.",
+      "cta": "Save this for your yearly review",
+      "footnote": "General education, not advice for any individual."
+    }
+  ],
+  "caption": "Asset allocation means deciding how to divide your money between different kinds of investments. It depends on your goals and how soon you need the money. Review it once a year. #AssetAllocation #MutualFunds #PersonalFinance #India #InvestingBasics"
+}

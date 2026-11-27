@@ -1,0 +1,40 @@
+{
+  "hook": "nostalgia",
+  "topic": "Traditional savings (gold, chits, FDs, LIC) and where mutual funds can fit, explained neutrally",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Family savings",
+      "headline": "Our parents saved in gold, chits and FDs",
+      "subhead": "Today there are more tools. Understanding each one helps you choose well.",
+      "icon": "coin"
+    },
+    {
+      "kind": "value",
+      "title": "Different tools, different jobs",
+      "icon": "coin",
+      "points": [
+        {
+          "title": "Gold",
+          "text": "Held by many families as a traditional store of value."
+        },
+        {
+          "title": "Fixed deposits",
+          "text": "Offer fixed interest for a set term, with their own tax rules."
+        },
+        {
+          "title": "Mutual funds",
+          "text": "Invest in markets through professionals. Value can go up or down."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Know each tool before you choose",
+      "cta": "Save this for your next savings review",
+      "footnote": "Not a comparison of returns. Each option has its own risks."
+    }
+  ],
+  "caption": "Many of us grew up watching our parents save in gold, chits and fixed deposits. Today there are more options, and each one has its own purpose and risk. Learn how each works before choosing. #FamilySavings #MutualFunds #Chennai #TamilNadu #MoneyBasics"
+}

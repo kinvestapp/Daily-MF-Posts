@@ -13,6 +13,7 @@ import shutil
 from pathlib import Path
 
 from .content import generate_post
+from .post_queue import next_item, remaining
 from .hooks import pick_hook, pick_topic
 from .reel import build_reel
 from .render import render_slides
@@ -53,10 +54,23 @@ def main():
     hook_key = pick_hook(hook_hist)
     topic, segment = pick_topic(topic_hist)
 
+    # CONTENT_SOURCE: "queue" = only pre-written posts (no API calls, no credits);
+    #                 "auto"  = queue first, then the Claude API if a key is set; "api" = API only.
+    source = os.environ.get("CONTENT_SOURCE", "auto")
+    queued = None
+    if not args.sample and source in ("queue", "auto"):
+        queued = next_item(exclude_date=date_str)
+        if queued is None and source == "queue":
+            raise RuntimeError("Content queue is empty. Add posts to content_queue/ (or set CONTENT_SOURCE=api).")
+        if queued is not None:
+            print(f"[queue] using {queued['queue_id']} ({len(remaining(date_str)) - 1} left after this one)")
+
     post, paths, issues = None, [], ["not started"]
     for attempt in range(1, MAX_RENDER_ATTEMPTS + 1):
         if args.sample:
             post = json.load(open(ROOT / "agent_v2" / "fixtures" / "sample_post.json", encoding="utf-8"))
+        elif queued is not None:
+            post = queued
         else:
             post = generate_post(topic, hook_key, segment)
         paths, issues = render_slides(post, day_dir, date_str)
@@ -64,6 +78,8 @@ def main():
             break
         print(f"[qa] attempt {attempt} failed: {issues}")
         shutil.rmtree(day_dir, ignore_errors=True)
+        if queued is not None:   # a queued post cannot be regenerated; fail loudly instead of publishing it broken
+            break
     if issues:
         raise RuntimeError(f"Quality gate failed after {MAX_RENDER_ATTEMPTS} attempts: {issues}")
 
@@ -79,6 +95,7 @@ def main():
         "hook": post.get("hook", hook_key),
         "topic": post.get("topic", topic),
         "segment": post.get("segment", segment),
+        "queue_id": post.get("queue_id"),
         "slides": post["slides"],
         "caption": post["caption"],
         "caption_full": post["caption"] + CAPTION_FOOTER,

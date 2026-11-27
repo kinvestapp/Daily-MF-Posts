@@ -1,0 +1,40 @@
+{
+  "hook": "awe",
+  "topic": "SIP basics: the power of a long habit",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SIP maths",
+      "headline": "₹5,000 a month for twenty years",
+      "subhead": "That is ₹12,00,000 of your own money, invested steadily.",
+      "icon": "clock"
+    },
+    {
+      "kind": "value",
+      "title": "What twenty years of a habit looks like",
+      "icon": "growth",
+      "points": [
+        {
+          "title": "The contribution",
+          "text": "₹5,000 × 12 months × 20 years = ₹12,00,000 invested."
+        },
+        {
+          "title": "The real asset",
+          "text": "Time invested matters as much as the amount you invest."
+        },
+        {
+          "title": "No promises",
+          "text": "Markets move, so actual outcomes can be higher or lower."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Small habits. Long timelines.",
+      "cta": "Save this for your next SIP review",
+      "footnote": "For illustration only. Not a projection of returns."
+    }
+  ],
+  "caption": "Twenty years of a ₹5,000 monthly SIP adds up to ₹12,00,000 of your own money invested. Time and consistency do the quiet work. This is only an illustration, and markets can move either way. #SIP #LongTermInvesting #MutualFunds #Chennai #TamilNadu"
+}
