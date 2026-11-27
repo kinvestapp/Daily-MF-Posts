@@ -53,7 +53,7 @@ def month_spend(now=None):
 
 def _check_limits():
     cap_calls = int(os.environ.get("MAX_API_CALLS_PER_RUN", "4"))
-    cap_usd = float(os.environ.get("MONTHLY_BUDGET_USD", "3"))
+    cap_usd = float(os.environ.get("MONTHLY_BUDGET_USD", "6"))
     if _calls_this_run >= cap_calls:
         raise BudgetExceeded(f"per-run API call cap reached ({cap_calls})")
     spent = month_spend()

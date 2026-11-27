@@ -16,6 +16,7 @@ from .content import generate_post
 from .post_queue import next_item, remaining
 from .hooks import pick_hook, pick_topic
 from .reel import build_reel
+from .experiments import choose_theme
 from .render import render_slides
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -54,6 +55,9 @@ def main():
     hook_key = pick_hook(hook_hist)
     topic, segment = pick_topic(topic_hist)
 
+    theme = choose_theme(date_str)
+    print(f"[pipeline] theme: {theme}")
+
     # CONTENT_SOURCE: "queue" = only pre-written posts (no API calls, no credits);
     #                 "auto"  = queue first, then the Claude API if a key is set; "api" = API only.
     source = os.environ.get("CONTENT_SOURCE", "auto")
@@ -73,7 +77,7 @@ def main():
             post = queued
         else:
             post = generate_post(topic, hook_key, segment)
-        paths, issues = render_slides(post, day_dir, date_str)
+        paths, issues = render_slides(post, day_dir, date_str, theme=theme)
         if not issues:
             break
         print(f"[qa] attempt {attempt} failed: {issues}")
@@ -101,6 +105,7 @@ def main():
         "caption_full": post["caption"] + CAPTION_FOOTER,
         "images": rel,
         "format": "carousel_3",
+        "theme": theme,
         "reel": reel_rel,
         "reel_audio": reel_audio,
         "published": {},

@@ -1,0 +1,33 @@
+name: weekly-improver
+
+# The agent's self-improvement loop: judges the running theme experiment (free), and if none is running
+# proposes one new challenger (one API call, counts against the monthly cap).
+on:
+  schedule:
+    - cron: '30 11 * * 0'   # Sundays, after the planner
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  improve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements-v2.txt
+      - name: Judge experiments, propose next challenger
+        run: python -m agent_v2.improver
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_API_CALLS_PER_RUN: "1"
+          MONTHLY_BUDGET_USD: "6"
+      - name: Commit
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Agent improver: experiment decisions (agent v2)"
+          file_pattern: "themes/*.json data/experiments.json data/improver_log.md data/api_usage.jsonl"

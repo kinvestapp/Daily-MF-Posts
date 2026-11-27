@@ -9,6 +9,8 @@ import html
 import os
 from pathlib import Path
 
+from . import themes
+
 ROOT = Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "assets" / "fonts"
 LOGO = ROOT / "assets" / "logo.png"
@@ -214,7 +216,7 @@ def slide_html(slide, index, total):
             f'<body><div class="frame"><div class="grid"></div>{_top(index, total)}{body}{_footer()}</div></body></html>')
 
 
-def render_slides(post, out_dir, stem):
+def render_slides(post, out_dir, stem, theme=None):
     """Render all slides. Returns (paths, qa_issues). qa_issues is [] when everything passed."""
     from playwright.sync_api import sync_playwright
 
@@ -227,7 +229,7 @@ def render_slides(post, out_dir, stem):
         ctx = browser.new_context(viewport={"width": W, "height": H}, device_scale_factor=SCALE)
         page = ctx.new_page()
         for i, slide in enumerate(slides):
-            page.set_content(slide_html(slide, i, len(slides)), wait_until="load")
+            page.set_content(themes.apply(slide_html(slide, i, len(slides)), theme), wait_until="load")
             page.evaluate("document.fonts.ready")
             page.evaluate(FIT_JS)
             qa = page.evaluate(QA_JS)
