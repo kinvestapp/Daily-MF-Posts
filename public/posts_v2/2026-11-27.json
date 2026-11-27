@@ -1,44 +1,45 @@
 {
   "date": "2026-11-27",
-  "hook": "authority",
-  "topic": "Common mutual fund myths",
-  "segment": "north_india",
+  "hook": "hope",
+  "topic": "Starting small: Rs 500 or Rs 1,000 a month",
+  "segment": "chennai_tn",
+  "queue_id": "001-start-small",
   "slides": [
     {
       "kind": "hook",
-      "kicker": "MYTH VS FACT",
-      "headline": "What mutual funds actually are—no jargon",
-      "subhead": "Five minutes to understand how your money pools with others.",
-      "icon": "cap"
+      "kicker": "SIP basics",
+      "headline": "Your future self will thank today's small SIP",
+      "subhead": "A fixed amount every month builds a habit that grows with you.",
+      "icon": "growth"
     },
     {
       "kind": "value",
-      "title": "Three big myths, cleared up",
+      "title": "Why starting small still counts",
+      "icon": "clock",
       "points": [
         {
-          "title": "Only rich invest",
-          "text": "Start with ₹500 or less. No wealth minimum required."
+          "title": "Time helps",
+          "text": "The earlier you begin, the longer your money can stay invested."
         },
         {
-          "title": "Funds lock money",
-          "text": "Most let you withdraw whenever you need it back."
+          "title": "Habit over amount",
+          "text": "A steady monthly SIP builds discipline you can increase later."
         },
         {
-          "title": "Stock funds gamble",
-          "text": "Professional managers research and monitor picks full-time for you."
+          "title": "Your money adds up",
+          "text": "₹1,000 × 12 months × 10 years = ₹1,20,000 invested. For illustration only."
         }
-      ],
-      "icon": "shield"
+      ]
     },
     {
       "kind": "cta",
-      "headline": "Myth-busting saved? Share it",
+      "headline": "Start small. Stay steady.",
       "cta": "Save this for your next family money chat",
-      "footnote": "Learn one concept at a time, at your pace."
+      "footnote": "For illustration only. Not advice on any scheme."
     }
   ],
-  "caption": "Mutual funds work by pooling money from many investors to buy stocks and bonds. A fund manager picks and monitors holdings. You own units, not individual stocks. #MutualFundMyths #InvestingBasics #MoneyTalk #KInvest #ClearandSimple",
-  "caption_full": "Mutual funds work by pooling money from many investors to buy stocks and bonds. A fund manager picks and monitors holdings. You own units, not individual stocks. #MutualFundMyths #InvestingBasics #MoneyTalk #KInvest #ClearandSimple\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
+  "caption": "Starting small is still starting. A fixed monthly SIP builds a habit that can grow as your income does. Begin with an amount that feels comfortable. #SIP #MutualFunds #StartSmall #Chennai #MoneyHabits",
+  "caption_full": "Starting small is still starting. A fixed monthly SIP builds a habit that can grow as your income does. Begin with an amount that feels comfortable. #SIP #MutualFunds #StartSmall #Chennai #MoneyHabits\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
   "images": [
     "public/posts_v2/2026-11-27/2026-11-27-1.jpg",
     "public/posts_v2/2026-11-27/2026-11-27-2.jpg",
@@ -46,6 +47,6 @@
   ],
   "format": "carousel_3",
   "reel": "public/posts_v2/2026-11-27/reel.mp4",
-  "reel_audio": "steady-habit.m4a",
+  "reel_audio": "bright-start.m4a",
   "published": {}
 }
