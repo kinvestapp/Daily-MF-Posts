@@ -1,48 +1,51 @@
 {
   "date": "2026-11-27",
-  "hook": "scarcity_of_time",
-  "topic": "NRI basics: KYC, FATCA and investing from the Nordics",
+  "hook": "belief",
+  "topic": "NRI basics: what FATCA means in plain words",
+  "segment": "nri",
   "slides": [
     {
       "kind": "hook",
       "kicker": "NRI INVESTING",
-      "headline": "Time compounds faster than money ever will.",
-      "subhead": "Start your journey today, one simple step at a time.",
-      "icon": "clock"
+      "headline": "Real wealth grows when nobody's watching.",
+      "subhead": "Discipline through paperwork is what separates serious investors from the rest.",
+      "icon": "growth"
     },
     {
       "kind": "value",
-      "title": "Three foundations for NRI investors",
+      "title": "FATCA: What it means for you",
       "points": [
         {
-          "title": "KYC first",
-          "text": "Complete Know Your Customer once. It unlocks your ability to invest."
+          "title": "What FATCA is",
+          "text": "An agreement between India and your country to share tax resident information transparently."
         },
         {
-          "title": "FATCA clarity",
-          "text": "Tax transparency between India and your Nordic country. Simple, legal, permanent."
+          "title": "Why you fill forms",
+          "text": "You declare tax residency once so both governments know you're investing transparently from abroad."
         },
         {
-          "title": "Invest with ease",
-          "text": "From the Nordics, invest in India using compliant, trusted platforms."
+          "title": "Your part",
+          "text": "Tell the truth about where you live and pay taxes. Then invest normally."
         }
       ],
       "icon": "shield"
     },
     {
       "kind": "cta",
-      "headline": "Ready to start your NRI journey?",
-      "cta": "Save this guide for your first conversation.",
-      "footnote": "K-Invest.app is AMFI-registered and compliant with all NRI regulations."
+      "headline": "Build your India portfolio with clarity.",
+      "cta": "Save this guide for your next investment conversation.",
+      "footnote": "K-Invest.app is an AMFI-registered Mutual Fund Distributor."
     }
   ],
-  "caption": "Time is your most valuable asset as an NRI investor. KYC, FATCA and a trusted platform are your three building blocks. Start today, however small. #NRIInvesting #InvestFromNordics #TimeInMoney #SIPJourney #KYCMatters",
-  "caption_full": "Time is your most valuable asset as an NRI investor. KYC, FATCA and a trusted platform are your three building blocks. Start today, however small. #NRIInvesting #InvestFromNordics #TimeInMoney #SIPJourney #KYCMatters\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
+  "caption": "NRI investing means working within systems that protect everyone. FATCA paperwork is not a barrier—it's proof you're doing it right. The boring months of compliance are exactly when wealth is built. #NRIInvesting #FATCABasics #PatientWealth #InvestInIndia #DisciplinedInvestor",
+  "caption_full": "NRI investing means working within systems that protect everyone. FATCA paperwork is not a barrier—it's proof you're doing it right. The boring months of compliance are exactly when wealth is built. #NRIInvesting #FATCABasics #PatientWealth #InvestInIndia #DisciplinedInvestor\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
   "images": [
     "public/posts_v2/2026-11-27/2026-11-27-1.jpg",
     "public/posts_v2/2026-11-27/2026-11-27-2.jpg",
     "public/posts_v2/2026-11-27/2026-11-27-3.jpg"
   ],
   "format": "carousel_3",
+  "reel": null,
+  "reel_audio": null,
   "published": {}
 }
