@@ -1,0 +1,40 @@
+{
+  "hook": "authority",
+  "topic": "Expense ratio and why costs matter",
+  "segment": "south_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Fund basics",
+      "headline": "Expense ratio explained in twenty seconds",
+      "subhead": "A small yearly fee that quietly shapes your experience.",
+      "icon": "coin"
+    },
+    {
+      "kind": "value",
+      "title": "What the expense ratio means",
+      "icon": "coin",
+      "points": [
+        {
+          "title": "The fee",
+          "text": "A yearly percentage the fund charges to cover its running costs."
+        },
+        {
+          "title": "Built into the fund",
+          "text": "It is part of the fund's value, so you never see a separate bill."
+        },
+        {
+          "title": "Why compare",
+          "text": "Lower costs leave more of your money invested over time."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Know the cost before you invest",
+      "cta": "Save this for your next fund review",
+      "footnote": "Read the scheme documents for each fund's expense ratio."
+    }
+  ],
+  "caption": "The expense ratio is the yearly cost of running a fund. You do not pay it as a separate bill, but it is built into the fund. Check it in the scheme documents. #ExpenseRatio #MutualFunds #FundBasics #InvestingBasics #SouthIndia"
+}

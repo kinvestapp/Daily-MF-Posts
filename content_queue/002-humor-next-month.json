@@ -1,0 +1,40 @@
+{
+  "hook": "humor",
+  "topic": "SIP basics: why this month beats next month",
+  "segment": "south_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SIP humor",
+      "headline": "Starting a SIP next month? Said every month",
+      "subhead": "No judgment. Here is a gentle nudge to begin this month.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Why this month beats next month",
+      "icon": "clock",
+      "points": [
+        {
+          "title": "Time is the asset",
+          "text": "Each month you wait is one month less invested."
+        },
+        {
+          "title": "Small is fine",
+          "text": "You can begin with a modest amount and raise it later."
+        },
+        {
+          "title": "Habits stick",
+          "text": "A fixed date and an auto-debit remove the daily decision."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "This month. Even a small SIP.",
+      "cta": "Save this and start your SIP today",
+      "footnote": "Mutual fund investing needs KYC. Ask us how to begin."
+    }
+  ],
+  "caption": "We have all said it: next month. The good news is that a SIP can start small and be increased later. Pick a date, pick an amount, and begin. #SIP #MutualFunds #InvestingHabits #SouthIndia #StartToday"
+}

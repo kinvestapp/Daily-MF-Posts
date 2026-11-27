@@ -1,0 +1,40 @@
+{
+  "hook": "curiosity",
+  "topic": "Goal-based investing: child's education, house, wedding, retirement",
+  "segment": "chennai_tn",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Goal planning",
+      "headline": "One question to ask before any investment",
+      "subhead": "What is this money for, and when will you need it?",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Match the goal to the time",
+      "icon": "calendar",
+      "points": [
+        {
+          "title": "Under 3 years",
+          "text": "Short goals usually need stability and easy access to your money."
+        },
+        {
+          "title": "3 to 7 years",
+          "text": "Mid-term goals, like a house down payment, need a balanced view."
+        },
+        {
+          "title": "7 years or more",
+          "text": "Long goals, like retirement, can stay invested through market ups and downs."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Name the goal. Then plan the time.",
+      "cta": "Save this for your next goal chat",
+      "footnote": "General education, not advice for any individual."
+    }
+  ],
+  "caption": "Before choosing any investment, ask what the money is for and when you will need it. A child's education, a home and retirement all have different time frames. Start with the goal. #GoalBasedInvesting #MutualFunds #FamilyGoals #Chennai #TamilNadu"
+}

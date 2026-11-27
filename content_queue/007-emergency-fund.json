@@ -1,0 +1,40 @@
+{
+  "hook": "relief",
+  "topic": "Emergency fund before investing",
+  "segment": "north_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Safety net",
+      "headline": "Build your safety net before you invest",
+      "subhead": "An emergency fund keeps one surprise from becoming a crisis.",
+      "icon": "shield"
+    },
+    {
+      "kind": "value",
+      "title": "Emergency fund in three questions",
+      "icon": "shield",
+      "points": [
+        {
+          "title": "How much",
+          "text": "Many people aim for three to six months of expenses."
+        },
+        {
+          "title": "Where to keep it",
+          "text": "Somewhere safe and easy to reach, not locked away."
+        },
+        {
+          "title": "When to use it",
+          "text": "Only for real emergencies, then top it up again."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Safety net first. Then SIP.",
+      "cta": "Save this for your money checklist",
+      "footnote": "General education, not advice for any individual."
+    }
+  ],
+  "caption": "A safety net comes before investing. Set aside a few months of expenses somewhere easy to reach, and use it only when you truly need it. Then begin your SIP with a calmer mind. #EmergencyFund #MoneyChecklist #PersonalFinance #India #MutualFunds"
+}

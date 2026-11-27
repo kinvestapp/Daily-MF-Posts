@@ -19,3 +19,10 @@ Agent that writes, checks, publishes and (from Phase 2) learns from results.
 Offline preview (no API keys): `python -m agent_v2.pipeline --sample`
 
 Roadmap: Phase 2 insights logging, Phase 3 learner/strategist, Phase 4 Reel + royalty-free audio, Phase 5 trend scan.
+
+## Content queue (no API credits)
+`content_queue/*.json` holds pre-written, pre-validated posts (hook, topic, segment, 3 slides, caption).
+The v2 workflow runs with `CONTENT_SOURCE=queue`, so it makes no Anthropic API calls. Posts are used in filename
+order; a post counts as used once a `public/posts_v2/<date>.json` records its `queue_id`.
+Refill by asking Claude to write the next batch (each file is checked against the length limits and the compliance linter),
+or set `CONTENT_SOURCE=auto` and add `ANTHROPIC_API_KEY` to let the agent write posts itself (billed separately by Anthropic).

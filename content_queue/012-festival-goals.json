@@ -1,0 +1,40 @@
+{
+  "hook": "pride",
+  "topic": "Wedding and festival season: goal-based saving for family events",
+  "segment": "north_india",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "Family goals",
+      "headline": "Celebrate big. Plan early. Stress less.",
+      "subhead": "Weddings and festivals are goals you can see coming.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Plan the celebration, not just the day",
+      "icon": "calendar",
+      "points": [
+        {
+          "title": "Know the date",
+          "text": "A wedding or festival has a date, so you can plan backward."
+        },
+        {
+          "title": "Split it up",
+          "text": "Break the total into a monthly amount you can manage."
+        },
+        {
+          "title": "Keep it separate",
+          "text": "Giving each goal its own pot keeps spending clear."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Plan the joy. Enjoy the day.",
+      "cta": "Save this for your next family plan",
+      "footnote": "General education. Choose what suits your time frame."
+    }
+  ],
+  "caption": "Weddings and festivals come with dates, which means you can plan for them. Break the cost into monthly amounts and give each goal its own pot. #FamilyGoals #WeddingPlanning #FestivalSeason #India #MutualFunds"
+}

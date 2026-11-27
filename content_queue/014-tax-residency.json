@@ -1,0 +1,40 @@
+{
+  "hook": "authority",
+  "topic": "NRI basics: what FATCA means in plain words",
+  "segment": "nri",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NRI basics",
+      "headline": "Tax residency forms, explained in plain words",
+      "subhead": "Why investors are asked to declare where they pay tax.",
+      "icon": "globe"
+    },
+    {
+      "kind": "value",
+      "title": "What the form is about",
+      "icon": "globe",
+      "points": [
+        {
+          "title": "The form",
+          "text": "A self-declaration of the country where you are tax resident."
+        },
+        {
+          "title": "Why it is asked",
+          "text": "Institutions collect it under reporting rules such as FATCA and CRS."
+        },
+        {
+          "title": "Your part",
+          "text": "Answer honestly and keep your details up to date."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Clear forms. Calm investing.",
+      "cta": "Save this for your KYC checklist",
+      "footnote": "Rules differ by country. This is general information."
+    }
+  ],
+  "caption": "Tax residency forms can look confusing, but the idea is simple: investors declare which country they pay tax in. Answer honestly and keep your details current. #NRIInvesting #KYC #FATCA #MutualFunds #InvestInIndia"
+}
