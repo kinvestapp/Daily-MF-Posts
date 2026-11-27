@@ -7,8 +7,6 @@ from .hooks import HOOKS, SEGMENTS
 
 ICONS = ["growth", "shield", "clock", "target", "home", "cap", "coin", "globe", "handshake", "calendar"]
 
-MODEL = os.environ.get("CONTENT_MODEL", "claude-haiku-4-5-20251001")
-
 SYSTEM = f"""You write compliant Instagram carousel copy for K-Invest.app, an AMFI-registered
 Mutual Fund Distributor. Audience in priority order: Chennai and Tamil Nadu, rest of South India,
 North India, then NRIs/overseas Indians. Most investors are domestic, so write for people living in India
@@ -26,6 +24,10 @@ HARD RULES (never break):
   fact 'AMFI-registered Mutual Fund Distributor'. No words like 'trusted', 'safe', 'secure', 'permanent' or 'risk-free'.
 - Tax and legal explanations stay generic and factual. FATCA is a US law; most other countries use a similar self-declaration called CRS.
   Say only that investors may need to declare their tax residency, never describe agreements between governments or promise outcomes.
+- Facts must be accurate for Indian mutual funds. Liquidity: open-ended funds can be sold on any business day, but some have exit loads
+  and ELSS tax-saving funds have a 3-year lock-in. Never say money can always be withdrawn freely. Never say funds are 'safe'.
+- For myth posts, label every point 'Myth: ...' (title) and 'Fact: ...' (text) so a fast scroller never reads a myth as a claim.
+- No em dashes or en dashes anywhere. Slide 1's kicker, headline and slide 2 must be about the same idea.
 - Use the Indian rupee sign as the single character used for rupees, and Indian number grouping (6,00,000 or 6 lakh).
 
 OUTPUT: ONLY a raw JSON object (no markdown fences, no commentary), exactly this shape:
@@ -90,9 +92,9 @@ def validate_shape(post):
     return post
 
 
-def generate_post(topic, hook_key, segment="chennai_tn", max_attempts=4):
-    from anthropic import Anthropic
-    client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+def generate_post(topic, hook_key, segment="chennai_tn", max_attempts=2):
+    """Daily fallback when the queue is empty: ONE post, at most 2 calls."""
+    from . import llm
     hook = HOOKS[hook_key]
     user = (
         f"Topic: {topic}\n"
@@ -103,17 +105,13 @@ def generate_post(topic, hook_key, segment="chennai_tn", max_attempts=4):
     messages = [{"role": "user", "content": user}]
     last_error = None
     for attempt in range(1, max_attempts + 1):
-        msg = client.messages.create(model=MODEL, max_tokens=900, system=SYSTEM, messages=messages)
-        text = msg.content[0].text
-        print(f"[content] attempt {attempt}: {text[:200]!r}")
+        text = llm.call(llm.WRITER_MODELS, SYSTEM, messages, max_tokens=900, purpose="daily-write")
         try:
             post = validate_shape(_parse(text))
             issues = lint_post(post)
             if issues:
                 raise ValueError(f"compliance patterns matched: {issues}")
-            post["hook"] = hook_key
-            post["topic"] = topic
-            post["segment"] = segment
+            post["hook"], post["topic"], post["segment"] = hook_key, topic, segment
             return post
         except (ValueError, KeyError, json.JSONDecodeError) as e:
             last_error = e

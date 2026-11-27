@@ -1,0 +1,93 @@
+"""One guarded door to the Anthropic API: usage log, per-run call cap, monthly budget cap, model fallback.
+
+Costs are ESTIMATES from the token counts the API reports and the price table below
+(USD per million tokens, input/output). Unknown models are priced like Sonnet, to stay on the safe side.
+Check real prices and balance in the Anthropic Console.
+"""
+import datetime
+import json
+import os
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+USAGE = ROOT / "data" / "api_usage.jsonl"
+PRICES = {"haiku": (1.0, 5.0), "sonnet": (3.0, 15.0), "opus": (15.0, 75.0)}
+
+WRITER_MODELS = [os.environ.get("WRITER_MODEL", "claude-sonnet-5-5"), "claude-haiku-4-5-20251001"]
+REVIEW_MODELS = [os.environ.get("REVIEW_MODEL", "claude-haiku-4-5-20251001")]
+
+_calls_this_run = 0
+_client = None
+
+
+class BudgetExceeded(RuntimeError):
+    pass
+
+
+def _price(model):
+    for key, val in PRICES.items():
+        if key in model:
+            return val
+    return PRICES["sonnet"]
+
+
+def month_spend(now=None):
+    now = now or datetime.datetime.now(datetime.timezone.utc)
+    prefix = now.strftime("%Y-%m")
+    total = 0.0
+    if USAGE.exists():
+        for line in USAGE.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                row = json.loads(line)
+                if row["ts"].startswith(prefix):
+                    total += row["est_usd"]
+    return round(total, 4)
+
+
+def _check_limits():
+    cap_calls = int(os.environ.get("MAX_API_CALLS_PER_RUN", "4"))
+    cap_usd = float(os.environ.get("MONTHLY_BUDGET_USD", "3"))
+    if _calls_this_run >= cap_calls:
+        raise BudgetExceeded(f"per-run API call cap reached ({cap_calls})")
+    spent = month_spend()
+    if spent >= cap_usd:
+        raise BudgetExceeded(f"monthly API budget reached (estimated ${spent:.2f} of ${cap_usd:.2f})")
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        from anthropic import Anthropic
+        _client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    return _client
+
+
+def _log(model, purpose, tin, tout):
+    pin, pout = _price(model)
+    row = {"ts": datetime.datetime.now(datetime.timezone.utc).isoformat(), "model": model, "purpose": purpose,
+           "input_tokens": tin, "output_tokens": tout, "est_usd": round(tin * pin / 1e6 + tout * pout / 1e6, 5)}
+    USAGE.parent.mkdir(parents=True, exist_ok=True)
+    with open(USAGE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row) + "\n")
+    return row
+
+
+def call(models, system, messages, max_tokens, purpose):
+    """Call the first model that exists. Returns the response text."""
+    global _calls_this_run
+    last = None
+    for model in models:
+        _check_limits()
+        try:
+            msg = _get_client().messages.create(model=model, max_tokens=max_tokens, system=system, messages=messages)
+        except Exception as e:  # unknown model id -> try the next one; anything else is a real error
+            if getattr(e, "status_code", None) == 404:
+                print(f"[llm] model {model} not available, trying next")
+                last = e
+                continue
+            raise
+        _calls_this_run += 1
+        row = _log(model, purpose, msg.usage.input_tokens, msg.usage.output_tokens)
+        print(f"[llm] {purpose}: {model} in={row['input_tokens']} out={row['output_tokens']} ~${row['est_usd']:.4f} (month ~${month_spend():.2f})")
+        return msg.content[0].text
+    raise RuntimeError(f"no usable model among {models}: {last}")
