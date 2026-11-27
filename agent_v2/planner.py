@@ -172,6 +172,9 @@ def main():
     stamp = datetime.date.today().isoformat()
     lines = [f"# Weekly planner report ({stamp})", "", f"Queued {len(saved)} of {args.count} posts ({review_note}). Month-to-date API spend (estimate): ${llm.month_spend():.2f}", "",
              "## Hook performance (score per 1,000 reached)", ""]
+    cap = float(os.environ.get("MONTHLY_BUDGET_USD", "3"))
+    if llm.month_spend() >= 0.8 * cap:
+        lines = lines[:1] + ["", f"**NEEDS OWNER APPROVAL: API spend is at {llm.month_spend()/cap:.0%} of the ${cap:.2f} monthly cap. Writing stops at the cap; raise MONTHLY_BUDGET_USD to continue.**"] + lines[1:]
     lines += [f"- {h}: mean {v['mean']} over {v['n']} post(s)" for h, v in sorted(htable.items(), key=lambda kv: -kv[1]['mean'])] or ["- no results collected yet (rotating hooks evenly)"]
     lines += ["", "## This batch", ""] + [f"- {s}" for s in saved]
     REPORT.parent.mkdir(parents=True, exist_ok=True)

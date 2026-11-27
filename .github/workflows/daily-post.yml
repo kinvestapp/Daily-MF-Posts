@@ -1,8 +1,7 @@
 name: daily-content-post
 
 on:
-  schedule:
-    - cron: '30 2 * * *'   # 8:00 AM IST daily
+  # v1 schedule retired: v2 (daily-post-v2.yml) is the live poster. Manual runs only.
   workflow_dispatch: {}
 
 jobs:

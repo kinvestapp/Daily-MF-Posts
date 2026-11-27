@@ -1,7 +1,9 @@
 name: daily-post-v2
 
-# Phase 1: manual trigger only. The v1 cron workflow keeps running until this is approved.
+# v2 is the live daily poster. Scheduled runs publish; manual runs publish only when ticked.
 on:
+  schedule:
+    - cron: '30 2 * * *'   # 8:00 AM IST daily
   workflow_dispatch:
     inputs:
       publish:
@@ -53,7 +55,7 @@ jobs:
           file_pattern: "public/posts_v2/*.json public/posts_v2/*/*.jpg data/api_usage.jsonl"
 
       - name: Publish carousel to Instagram + Facebook
-        if: ${{ inputs.publish }}
+        if: ${{ github.event_name == 'schedule' || inputs.publish }}
         run: python publish_v2.py
         env:
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
@@ -63,7 +65,7 @@ jobs:
           PUBLISH_BRANCH: ${{ github.ref_name }}
 
       - name: Save publish ids back to the repo
-        if: ${{ always() && inputs.publish }}
+        if: ${{ always() && (github.event_name == 'schedule' || inputs.publish) }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Record published media ids (agent v2)"
