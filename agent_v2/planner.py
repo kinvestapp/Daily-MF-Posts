@@ -16,8 +16,8 @@ from pathlib import Path
 
 from . import llm
 from .compliance import lint_post
-from .content import SYSTEM, validate_shape
-from .hooks import HOOKS, SEGMENTS
+from .content import CRAFT, LIMITS, RULES, validate_hook, validate_shape
+from .hooks import HOOKS, SEGMENTS, series_for
 from .strategist import history, plan
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,17 +25,46 @@ QUEUE = ROOT / "content_queue"
 REPORT = ROOT / "data" / "weekly_report.md"
 REFILL_BELOW = int(os.environ.get("REFILL_BELOW", "7"))
 
-BATCH_SYSTEM = SYSTEM.replace("ONLY a raw JSON object", "ONLY a raw JSON array with one object per assignment, in the same order, each object").replace(
-    "exactly this shape:", "exactly this shape (the array contains N of these):") + "\nYou receive N numbered assignments. Return the array in assignment order."
+MIN_SCORE = 7          # judge score (1-10) a hook must reach before it is queued
+CHUNK = 5              # posts per writer call (smaller batches write better)
 
-REVIEW_SYSTEM = """You are a strict compliance and accuracy reviewer for Indian mutual fund distributor social posts (AMFI/SEBI context).
-For each numbered post decide ok=true/false. Flag a post if ANY of these is true:
-- a factual statement about Indian mutual funds, SIPs, taxes, FATCA/CRS, KYC or liquidity is wrong or too absolute
-- it promises or implies returns, safety, approval or regulatory endorsement
-- a myth could be misread as a claim (myth/fact labels missing), or slide 1 and slide 2 are about different ideas
-- tone is fear, urgency, greed or anger, or it attacks a named institution
-- wording is confusing for a first-time investor
-Respond ONLY with raw JSON: {"results": [{"id": <n>, "ok": true|false, "issues": ["short reason", ...]}]}. Keep issues short. Be strict but not pedantic."""
+BATCH_SHAPE = """{
+  "hook_candidates": [{"headline": "...", "subhead": "..."}, ... six different candidates ...],
+  "hook_icon": "<icon>",
+  "slides": [
+    {"kind": "value", "title": "...", "points": [{"title": "...", "text": "..."}, {"title": "...", "text": "..."}, {"title": "...", "text": "..."}], "icon": "<icon>"},
+    {"kind": "cta", "headline": "...", "cta": "...", "footnote": "..."}
+  ],
+  "caption": "...",
+  "translation_en": "English translation of every Tanglish line, or empty string for lang=en"
+}"""
+
+BATCH_SYSTEM = (RULES + "\n" + CRAFT + "\n" + LIMITS + """
+
+You receive N numbered assignments. For EACH one write SIX genuinely different hook candidates (different angles:
+a scene, a contrast, a confession, a number, an invitation, a then-vs-now) plus one shared slide 2, slide 3 and
+caption that work with any of them. Do NOT write the kicker; the series label is added by code.
+OUTPUT: ONLY a raw JSON array, one object per assignment in order, each exactly this shape:
+""" + BATCH_SHAPE)
+
+JUDGE_SYSTEM = """You are the creative director AND compliance reviewer for K-Invest.app's Instagram (Indian mutual fund
+distributor, audience mainly Chennai). For each numbered post:
+1. Pick the hook candidate most likely to make a 28-40 year old salaried Chennai parent stop scrolling. Score it 1-10:
+   specificity (a real scene, person or moment), tension or curiosity gap, emotional pull (belonging, hope, pride,
+   positive FOMO), instantly clear in one second, feels local, sounds like a person not a brochure.
+   9-10 = you would screenshot it. 5 = generic AMC/bank copy. Be harsh: generic copy scores 5 or less.
+2. If the best candidate scores below 8, write a better headline (max 9 words) and subhead (max 16 words) yourself,
+   same idea and same language (Tanglish = Tamil words in English letters mixed with English, respectful 'neenga'
+   forms, no Tamil script), and score that instead.
+3. Optionally rewrite the caption's FIRST line (max 12 words) if it is weak. Keep it different from the headline.
+4. Compliance/accuracy: ok=false if anything implies returns, safety, guarantees or approval; uses fear, shame or
+   urgency to buy; attacks gold, FDs, chits, banks or AMCs; invents statistics or testimonials; states a wrong fact
+   about Indian mutual funds, KYC, tax or liquidity; Tanglish is unnatural, disrespectful or its translation_en does
+   not match. A weak hook is NOT a compliance issue; fix it with step 2 instead.
+Respond ONLY with raw JSON:
+{"results": [{"id": <n>, "best": <candidate index from 1>, "score": <1-10>, "headline": "<final headline>",
+  "subhead": "<final subhead>", "caption_first_line": "<new first line or empty>", "why": "<one short reason>",
+  "ok": true|false, "issues": ["short reason", ...]}]}"""
 
 
 def _json(text, opener):
@@ -54,49 +83,93 @@ def _json(text, opener):
 def _write_user(assignments, feedback=None):
     lines = [f"N = {len(assignments)} assignments."]
     for i, a in enumerate(assignments, 1):
-        lines.append(f"{i}. hook={a['hook']} ({HOOKS[a['hook']]['angle']}) | topic={a['topic']} | audience={a['segment']}: {SEGMENTS[a['segment']]['notes']}")
+        h = HOOKS[a["hook"]]
+        lines.append(f"{i}. lang={a.get('lang', 'en')} | hook={a['hook']}: {h['angle']} (style reference, do not copy: {h['example']})"
+                     f" | topic={a['topic']} | audience={a['segment']}: {SEGMENTS[a['segment']]['notes']}")
         if feedback and feedback.get(i):
             lines.append("   FIX THESE ISSUES FROM THE LAST DRAFT: " + "; ".join(feedback[i]))
     return "\n".join(lines)
 
 
-def _clean(post, a):
-    """Validate shape + linter. Returns (post, problem or None)."""
+def write_batch(assignments, feedback=None):
+    out = []
+    for k in range(0, len(assignments), CHUNK):
+        part = assignments[k:k + CHUNK]
+        fb = {i - k: v for i, v in (feedback or {}).items() if k < i <= k + CHUNK}
+        text = llm.call(llm.WRITER_MODELS, BATCH_SYSTEM, [{"role": "user", "content": _write_user(part, fb)}],
+                        max_tokens=1800 * len(part) + 800, purpose="planner-write")
+        arr = _json(text, "[")
+        if len(arr) != len(part):
+            raise ValueError(f"expected {len(part)} posts, got {len(arr)}")
+        out += arr
+    return out
+
+
+def judge(drafts, assignments):
+    """One call: pick/improve the hook, score it, and review compliance. Returns {position: result}."""
+    payload = []
+    for i, (d, a) in enumerate(zip(drafts, assignments), 1):
+        payload.append({"id": i, "lang": a.get("lang", "en"), "audience": a["segment"], "hook_type": a["hook"],
+                        "candidates": d.get("hook_candidates", []), "slides": d.get("slides", []),
+                        "caption": d.get("caption", ""), "translation_en": d.get("translation_en", "")})
+    text = llm.call(llm.REVIEW_MODELS, JUDGE_SYSTEM, [{"role": "user", "content": json.dumps(payload, ensure_ascii=False)}],
+                    max_tokens=3000 + 700 * len(drafts), purpose="planner-judge")
+    return {r["id"]: r for r in _json(text, "{")["results"]}
+
+
+def assemble(d, a, j):
+    """Build the final post from a draft and the judge's verdict. Returns (post, problem or None)."""
     try:
+        cands = d["hook_candidates"]
+        best = cands[max(0, min(len(cands) - 1, int(j.get("best", 1)) - 1))]
+        hook = {"kind": "hook", "kicker": series_for(a["hook"], a["segment"]),
+                "headline": j.get("headline") or best["headline"], "subhead": j.get("subhead") or best.get("subhead", ""),
+                "icon": d.get("hook_icon", "growth")}
+        validate_hook(hook)
+        caption = d["caption"].strip()
+        if j.get("caption_first_line"):
+            rest = caption.split("\n", 1)
+            caption = j["caption_first_line"].strip() + ("\n" + rest[1] if len(rest) > 1 else "")
+        post = {"slides": [hook] + list(d["slides"]), "caption": caption, "translation_en": d.get("translation_en", "")}
         validate_shape(post)
-        issues = lint_post(post)
+        issues = lint_post(post) + lint_post({"caption": post["translation_en"]})
         if issues:
-            return post, f"compliance patterns matched: {issues}"
-    except (ValueError, KeyError, AttributeError, TypeError) as e:
-        return post, str(e)
-    post.update({"hook": a["hook"], "topic": a["topic"], "segment": a["segment"]})
+            return None, f"compliance patterns matched: {issues}"
+    except (ValueError, KeyError, AttributeError, TypeError, IndexError) as e:
+        return None, str(e)
+    if not j.get("ok", False):
+        return None, "; ".join(j.get("issues") or ["reviewer rejected"])
+    if int(j.get("score", 0)) < MIN_SCORE:
+        return None, f"hook too weak (score {j.get('score')}): {j.get('why', '')}. Write sharper, more specific candidates."
+    post.update({"hook": a["hook"], "topic": a["topic"], "segment": a["segment"], "lang": a.get("lang", "en"),
+                 "series": hook["kicker"], "hook_score": int(j["score"]), "judge_note": j.get("why", "")})
     return post, None
 
 
-def write_batch(assignments, feedback=None):
-    text = llm.call(llm.WRITER_MODELS, BATCH_SYSTEM, [{"role": "user", "content": _write_user(assignments, feedback)}],
-                    max_tokens=1000 * len(assignments) + 500, purpose="planner-write")
-    arr = _json(text, "[")
-    if len(arr) != len(assignments):
-        raise ValueError(f"expected {len(assignments)} posts, got {len(arr)}")
-    return arr
-
-
-def review(posts):
-    payload = json.dumps([{"id": i, **{k: p[k] for k in ("slides", "caption")}} for i, p in enumerate(posts, 1)], ensure_ascii=False)
-    text = llm.call(llm.REVIEW_MODELS, REVIEW_SYSTEM, [{"role": "user", "content": payload}], max_tokens=8000, purpose="planner-review")
-    return {r["id"]: r.get("issues", []) for r in _json(text, "{")["results"] if not r.get("ok", False)}
+def run_round(assignments, feedback=None):
+    drafts = write_batch(assignments, feedback)
+    verdicts = judge(drafts, assignments)
+    ok, bad = {}, {}
+    for i, (d, a) in enumerate(zip(drafts, assignments), 1):
+        post, why = assemble(d, a, verdicts.get(i, {}))
+        if why:
+            bad[i] = [why]
+        else:
+            ok[i] = post
+    return ok, bad
 
 
 def next_number():
-    nums = [int(re.match(r"(\d+)", Path(f).name).group(1)) for f in glob.glob(str(QUEUE / "*.json")) if re.match(r"\d+", Path(f).name)]
+    files = glob.glob(str(QUEUE / "*.json")) + glob.glob(str(QUEUE / "retired" / "*.json"))
+    nums = [int(re.match(r"(\d+)", Path(f).name).group(1)) for f in files if re.match(r"\d+", Path(f).name)]
     return (max(nums) if nums else 0) + 1
 
 
 def save(post, n):
     slug = re.sub(r"[^a-z0-9]+", "-", post["topic"].lower())[:40].strip("-")
     path = QUEUE / f"{n:03d}-{post['hook']}-{slug}.json"
-    json.dump({k: post[k] for k in ("hook", "topic", "segment", "slides", "caption")}, open(path, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+    keep = ("hook", "topic", "segment", "lang", "series", "hook_score", "judge_note", "slides", "caption", "translation_en")
+    json.dump({k: post[k] for k in keep if k in post}, open(path, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     return path.name
 
 
@@ -130,39 +203,20 @@ def main():
     if args.dry:
         return
 
-    drafts = write_batch(assignments)
-    accepted, problems = {}, {}
-    for i, (d, a) in enumerate(zip(drafts, assignments), 1):
-        post, why = _clean(d, a)
-        if why:
-            problems[i] = [why]
-        else:
-            accepted[i] = post
-    review_note = "reviewed"
-    try:
-        flagged = review([accepted[i] for i in sorted(accepted)]) if accepted else {}
-    except (llm.Truncated, ValueError, KeyError, json.JSONDecodeError) as e:
-        print(f"[planner] WARNING review unusable, continuing with code checks only: {e}")
-        flagged, review_note = {}, f"REVIEW SKIPPED ({str(e)[:80]})"
-    order = sorted(accepted)
-    for pos, i in enumerate(order, 1):          # review ids are positions within the reviewed list
-        if pos in flagged:
-            problems[i] = flagged[pos]
-            del accepted[i]
-
+    review_note = "judged"
+    accepted, problems = run_round(assignments)
     if problems:
         redo = sorted(problems)
         print(f"[planner] rewriting {len(redo)} post(s): {problems}")
         try:
-            fixed = write_batch([assignments[i - 1] for i in redo], {k + 1: problems[i] for k, i in enumerate(redo)})
-            for i, d in zip(redo, fixed):
-                post, why = _clean(d, assignments[i - 1])
-                if why is None:
-                    accepted[i] = post
+            fixed, still = run_round([assignments[i - 1] for i in redo], {k + 1: problems[i] for k, i in enumerate(redo)})
+            for k, i in enumerate(redo, 1):
+                if k in fixed:
+                    accepted[i] = fixed[k]
                 else:
-                    print(f"[planner] dropped assignment {i}: {why}")
-        except (ValueError, KeyError, json.JSONDecodeError) as e:
-            print(f"[planner] rewrite failed, dropping those posts: {e}")
+                    print(f"[planner] dropped assignment {i}: {still.get(k)}")
+        except (llm.BudgetExceeded, llm.Truncated, ValueError, KeyError, json.JSONDecodeError) as e:
+            print(f"[planner] rewrite round failed, dropping those posts: {e}")
 
     n = next_number()
     saved = []
@@ -176,7 +230,9 @@ def main():
     if llm.month_spend() >= 0.8 * cap:
         lines = lines[:1] + ["", f"**NEEDS OWNER APPROVAL: API spend is at {llm.month_spend()/cap:.0%} of the ${cap:.2f} monthly cap. Writing stops at the cap; raise MONTHLY_BUDGET_USD to continue.**"] + lines[1:]
     lines += [f"- {h}: mean {v['mean']} over {v['n']} post(s)" for h, v in sorted(htable.items(), key=lambda kv: -kv[1]['mean'])] or ["- no results collected yet (rotating hooks evenly)"]
-    lines += ["", "## This batch", ""] + [f"- {s}" for s in saved]
+    lines += ["", "## This batch (hook score / series / language)", ""]
+    lines += [f"- {name}: {accepted[i]['hook_score']}/10, {accepted[i]['series']}, {accepted[i]['lang']}. Headline: {accepted[i]['slides'][0]['headline']}"
+              for name, i in zip(saved, sorted(accepted))]
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Saved {len(saved)} post(s): {saved}")
