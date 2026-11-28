@@ -16,7 +16,7 @@ from pathlib import Path
 
 from . import llm
 from .compliance import lint_post
-from .content import CRAFT, LIMITS, RULES, validate_hook, validate_shape
+from .content import CRAFT, HARD, LIMITS, RULES, validate_hook, validate_shape
 from .hooks import HOOKS, SEGMENTS, series_for
 from .strategist import history, plan
 
@@ -129,6 +129,29 @@ def judge(drafts, assignments):
     return out
 
 
+LOCAL_TAGS = {"chennai_tn": "#Chennai #NammaChennai #TamilNadu #ChennaiFamilies #SIP #MutualFunds #MoneyHabits",
+              "south_india": "#SouthIndia #Bengaluru #Kerala #Hyderabad #SIP #MutualFunds #MoneyHabits",
+              "north_india": "#India #Delhi #FamilyGoals #SIP #MutualFunds #MoneyHabits",
+              "nri": "#NRI #NRIInvesting #India #SIP #MutualFunds"}
+
+
+def tidy_caption(caption, new_first="", segment="chennai_tn"):
+    """Instagram shows about two lines before 'more': hook on line 1, body, question, then hashtags, each on its own line."""
+    import re as _re
+    text = " ".join(caption.split())
+    tags = " ".join(t for t in text.split() if t.startswith("#"))
+    body = " ".join(t for t in text.split() if not t.startswith("#"))
+    sentences = _re.split(r"(?<=[.!?])\s+", body.strip())
+    if new_first:
+        sentences[0] = new_first.strip()
+    qi = max([i for i, x in enumerate(sentences) if x.endswith("?") and i > 0], default=len(sentences))
+    middle, ask = sentences[1:qi], sentences[qi:]
+    lines = [sentences[0]] + ([" ".join(middle)] if middle else []) + ([" ".join(ask)] if ask else [])
+    if not tags:
+        tags = LOCAL_TAGS.get(segment, LOCAL_TAGS["chennai_tn"])
+    return "\n\n".join(lines + [tags])
+
+
 def assemble(d, a, j):
     """Build the final post from a draft and the judge's verdict. Returns (post, problem or None)."""
     try:
@@ -138,10 +161,7 @@ def assemble(d, a, j):
                 "headline": j.get("headline") or best["headline"], "subhead": j.get("subhead") or best.get("subhead", ""),
                 "icon": d.get("hook_icon", "growth")}
         validate_hook(hook)
-        caption = d["caption"].strip()
-        if j.get("caption_first_line"):
-            rest = caption.split("\n", 1)
-            caption = j["caption_first_line"].strip() + ("\n" + rest[1] if len(rest) > 1 else "")
+        caption = tidy_caption(d["caption"], j.get("caption_first_line", ""), a["segment"])
         post = {"slides": [hook] + list(d["slides"]), "caption": caption, "translation_en": d.get("translation_en", "")}
         validate_shape(post)
         issues = lint_post(post) + lint_post({"caption": post["translation_en"]})
@@ -160,7 +180,8 @@ def assemble(d, a, j):
     return post, None
 
 
-BODY_LIMITS = [("value", "title", 8), ("cta", "headline", 8), ("cta", "cta", 10), ("cta", "footnote", 14)]
+BODY_LIMITS = [("value", "title", HARD["value_title"]), ("cta", "headline", HARD["cta_headline"]),
+               ("cta", "cta", HARD["cta"]), ("cta", "footnote", HARD["footnote"])]
 
 
 def _n(t):
@@ -171,7 +192,7 @@ def precheck(d):
     """Cheap code checks before the judge. Drops over-long hook candidates and returns exact, fixable problems."""
     problems = []
     cands = [c for c in d.get("hook_candidates") or [] if isinstance(c, dict) and c.get("headline")
-             and _n(c["headline"]) <= 9 and _n(c.get("subhead", "")) <= 16]
+             and _n(c["headline"]) <= HARD["headline"] and _n(c.get("subhead", "")) <= HARD["subhead"]]
     if len(cands) < 2:
         problems.append("hook candidates: headline max 9 words, subhead max 16 words; most of yours were longer")
     d["hook_candidates"] = cands
@@ -185,9 +206,9 @@ def precheck(d):
     if len(pts) != 3:
         problems.append("value.points must have exactly 3 items")
     for p in pts:
-        if _n(p.get("title", "")) > 4:
+        if _n(p.get("title", "")) > HARD["point_title"]:
             problems.append(f"point title has {_n(p.get('title'))} words (max 4): '{p.get('title')}'")
-        if _n(p.get("text", "")) > 16:
+        if _n(p.get("text", "")) > HARD["point_text"]:
             problems.append(f"point text has {_n(p.get('text'))} words (max 16): '{p.get('text')}'")
     if "?" not in d.get("caption", ""):
         problems.append("caption needs one question inviting a comment")
@@ -277,6 +298,17 @@ def main():
                     print(f"[planner] dropped assignment {i}: {still.get(k)}")
         except (llm.BudgetExceeded, llm.Truncated, ValueError, KeyError, json.JSONDecodeError) as e:
             print(f"[planner] rewrite round failed, dropping those posts: {e}")
+
+    try:   # render every accepted post once so nothing reaches the queue that cannot be laid out
+        import tempfile
+        from .render import render_slides
+        for i in sorted(accepted):
+            _, qa = render_slides(accepted[i], tempfile.mkdtemp(), "check")
+            if qa:
+                print(f"[planner] dropped assignment {i}: layout check failed {qa}")
+                del accepted[i]
+    except ImportError:
+        print("[planner] playwright not installed; skipping layout check")
 
     n = next_number()
     saved = []
