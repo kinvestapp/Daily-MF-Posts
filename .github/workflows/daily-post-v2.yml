@@ -4,6 +4,8 @@ name: daily-post-v2
 on:
   schedule:
     - cron: '30 2 * * *'   # 8:00 AM IST daily
+    - cron: '50 3 * * *'   # backup: GitHub often delays or drops scheduled runs; the guard job skips if already posted
+    - cron: '50 5 * * *'   # second backup
   workflow_dispatch:
     inputs:
       publish:
@@ -14,8 +16,31 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: daily-post-v2
+  cancel-in-progress: false
+
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        name: Skip scheduled backups when today's post is already live
+        run: |
+          D=$(date -u +%F)
+          if [ "${{ github.event_name }}" = "schedule" ] && [ -f "public/posts_v2/$D.json" ] && \
+             python3 -c "import json,sys;p=json.load(open('public/posts_v2/$D.json'))['published'];sys.exit(0 if p.get('instagram_media_id') else 1)"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Already published for $D, skipping"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
   post:
+    needs: check
+    if: ${{ needs.check.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
