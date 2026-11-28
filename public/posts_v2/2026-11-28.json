@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-28",
+  "hook": "humor",
+  "topic": "SIP basics: why this month beats next month",
+  "segment": "south_india",
+  "queue_id": "002-humor-next-month",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SIP humor",
+      "headline": "Starting a SIP next month? Said every month",
+      "subhead": "No judgment. Here is a gentle nudge to begin this month.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Why this month beats next month",
+      "icon": "clock",
+      "points": [
+        {
+          "title": "Time is the asset",
+          "text": "Each month you wait is one month less invested."
+        },
+        {
+          "title": "Small is fine",
+          "text": "You can begin with a modest amount and raise it later."
+        },
+        {
+          "title": "Habits stick",
+          "text": "A fixed date and an auto-debit remove the daily decision."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "This month. Even a small SIP.",
+      "cta": "Save this and start your SIP today",
+      "footnote": "Mutual fund investing needs KYC. Ask us how to begin."
+    }
+  ],
+  "caption": "We have all said it: next month. The good news is that a SIP can start small and be increased later. Pick a date, pick an amount, and begin. #SIP #MutualFunds #InvestingHabits #SouthIndia #StartToday",
+  "caption_full": "We have all said it: next month. The good news is that a SIP can start small and be increased later. Pick a date, pick an amount, and begin. #SIP #MutualFunds #InvestingHabits #SouthIndia #StartToday\n\nARN-366802 | AMFI-registered Mutual Fund Distributor | www.assetplus.in/mfd/ARN-366802 | Mutual Fund investments are subject to market risks, read all scheme related documents carefully",
+  "images": [
+    "public/posts_v2/2026-11-28/2026-11-28-1.jpg",
+    "public/posts_v2/2026-11-28/2026-11-28-2.jpg",
+    "public/posts_v2/2026-11-28/2026-11-28-3.jpg"
+  ],
+  "format": "carousel_3",
+  "theme": "midnight_gold",
+  "reel": "public/posts_v2/2026-11-28/reel.mp4",
+  "reel_audio": "calm-growth.m4a",
+  "published": {}
+}
