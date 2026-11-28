@@ -1,0 +1,45 @@
+{
+  "hook": "hope",
+  "topic": "Staying invested through market ups and downs",
+  "segment": "south_india",
+  "lang": "en",
+  "series": "SALARY DAY",
+  "hook_score": 7,
+  "judge_note": "A concrete parent moment (a college fee 15 years away) with a hopeful tone. It is clear in one second, though not very local.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SALARY DAY",
+      "headline": "Your child's college fee is 15 years away.",
+      "subhead": "One small envelope each month turns waiting into a plan.",
+      "icon": "clock"
+    },
+    {
+      "kind": "value",
+      "title": "Why steady beats perfect",
+      "icon": "growth",
+      "points": [
+        {
+          "title": "Market noise passes",
+          "text": "Some months it falls, others it climbs. Your monthly amount stays steady."
+        },
+        {
+          "title": "Small habits add up",
+          "text": "5,000 rupees monthly for 10 years means 6,00,000 rupees added by you. Illustration only, not returns."
+        },
+        {
+          "title": "Skip the waiting trap",
+          "text": "Waiting for the perfect time is also a decision. Months slip by quietly."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Send this to someone waiting.",
+      "cta": "They know who they are.",
+      "footnote": "Mutual fund investments are subject to market risks. Read all scheme documents carefully."
+    }
+  ],
+  "caption": "15 years feels long.\n\nA monthly habit can make it feel closer.\n\nWhich goal are you putting on the back burner? Tell us below.\n\n#SIP #MutualFunds #MoneyHabits #FamilyGoals #LongTermInvesting #SmartSaving #IndianFamilies",
+  "translation_en": ""
+}

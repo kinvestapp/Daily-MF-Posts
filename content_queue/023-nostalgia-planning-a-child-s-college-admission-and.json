@@ -1,0 +1,45 @@
+{
+  "hook": "nostalgia",
+  "topic": "Planning a child's college admission and fees years ahead, goal by goal",
+  "segment": "chennai_tn",
+  "lang": "tanglish",
+  "series": "AMMA'S WAY, OUR WAY",
+  "hook_score": 7,
+  "judge_note": "Amma's gold and Appa's FD is a warm, familiar scene. I rewrote the English candidate into Tanglish and removed the sacrifice framing.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "AMMA'S WAY, OUR WAY",
+      "headline": "Amma gold-la, Appa FD-la save pannanga. Neenga enna-la?",
+      "subhead": "Child college goal-ku, year by year plan pannunga. Chinna monthly amount-la start pannalam.",
+      "icon": "cap"
+    },
+    {
+      "kind": "value",
+      "title": "Planning a child's college, year by year",
+      "icon": "cap",
+      "points": [
+        {
+          "title": "Know the timeline first",
+          "text": "Note the admission year. Fees start then. Count how many years you have."
+        },
+        {
+          "title": "Add the monthly amount",
+          "text": "₹12 lakh in five years is about ₹20,000 monthly, before market ups and downs."
+        },
+        {
+          "title": "Same goal, another tool",
+          "text": "Gold and FDs still have their place. This is one more way toward the same goal."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Save this for the next parent you meet.",
+      "cta": "Share it: college planning is a habit, not a burden.",
+      "footnote": "Fees may rise over time. Mutual funds are subject to market risks."
+    }
+  ],
+  "caption": "Kolandhai college-ku innum varusham irukku.\n\nIppove plan pannalama? Same habit as Amma and Appa, with one more tool. Market risks apply.\n\nWhen does your child's college clock start?\n\n#Chennai #NammaChennai #ParentingGoals #ChildrensEducation #SIP #MoneyHabits #TamilNadu",
+  "translation_en": "Amma saved in gold, Appa in FDs. What will you save in? / Plan your child's college goal year by year. You can start with a small monthly amount. / There are still years left for your child's college. Shall we plan now?"
+}

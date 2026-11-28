@@ -1,0 +1,45 @@
+{
+  "hook": "start_early",
+  "topic": "Neighbourhood habits: how Chennai families keep a small monthly SIP going alongside rent, school fees and EMIs",
+  "segment": "chennai_tn",
+  "lang": "en",
+  "series": "SALARY DAY",
+  "hook_score": 7,
+  "judge_note": "Rent day and school fee day are a real Chennai-parent scene, and 'And then?' creates a curiosity gap.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SALARY DAY",
+      "headline": "Rent day. School fee day. Then what's left?",
+      "subhead": "Chennai families fit a small monthly habit between the bills. Here's how.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "How Chennai families can do it",
+      "icon": "calendar",
+      "points": [
+        {
+          "title": "Treat it like rent",
+          "text": "Pick one date monthly, like school fee day. Make this small step non-negotiable."
+        },
+        {
+          "title": "Fits alongside everything",
+          "text": "Not instead of gold, chits or FDs. Alongside them. One more choice for you."
+        },
+        {
+          "title": "Starting early gives time",
+          "text": "5,000 monthly from 25 versus 35 gives the earlier start more time. Illustration only."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Send this to your next-month friend.",
+      "cta": "They know exactly who they are.",
+      "footnote": "Mutual fund investments are subject to market risks. Read all scheme documents carefully."
+    }
+  ],
+  "caption": "Salary comes in, fees and EMI go out.\n\nStill, one small habit can fit.\n\nWhich date would you pick for it, the 1st or the 5th?\n\n#Chennai #NammaChennai #SIP #MutualFunds #MoneyHabits #ChennaiFamilies #FamilyGoals",
+  "translation_en": ""
+}

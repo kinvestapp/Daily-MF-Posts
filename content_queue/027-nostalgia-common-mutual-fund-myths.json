@@ -1,0 +1,45 @@
+{
+  "hook": "nostalgia",
+  "topic": "Common mutual fund myths",
+  "segment": "north_india",
+  "lang": "en",
+  "series": "AMMA'S WAY, OUR WAY",
+  "hook_score": 8,
+  "judge_note": "The Amma/Appa gold and FD pairing is a specific, warm, familiar scene. It ends on a personal question, 'You?'.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "AMMA'S WAY, OUR WAY",
+      "headline": "Amma saved in gold. Appa in FDs. You?",
+      "subhead": "Both still work. What will your kids say you added beside them?",
+      "icon": "cap"
+    },
+    {
+      "kind": "value",
+      "title": "Three myths about mutual funds",
+      "icon": "shield",
+      "points": [
+        {
+          "title": "Myth: Only for experts",
+          "text": "Fact: Many salaried families and business owners use them for regular saving."
+        },
+        {
+          "title": "Myth: Replaces gold, FDs",
+          "text": "Fact: It's a different option. Keep gold, FDs or both. You're adding choice."
+        },
+        {
+          "title": "Myth: Money gets locked",
+          "text": "Fact: Open-ended funds can usually be redeemed on business days. ELSS has a 3-year lock-in."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Save this for the next family discussion.",
+      "cta": "When someone asks, you have answers.",
+      "footnote": "Mutual fund investments are subject to market risks. Read all scheme documents carefully."
+    }
+  ],
+  "caption": "Every generation finds its own way to save.\n\nGold and FDs still work. Mutual funds are one more option beside them.\n\nWhat did your parents save in?\n\n#MutualFunds #MoneyHabits #FamilyGoals #Investing #SmartSaving #IndianFamilies #Deepavali",
+  "translation_en": ""
+}

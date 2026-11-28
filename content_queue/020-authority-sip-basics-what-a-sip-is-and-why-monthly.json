@@ -1,0 +1,45 @@
+{
+  "hook": "authority",
+  "topic": "SIP basics: what a SIP is and why monthly habits matter",
+  "segment": "chennai_tn",
+  "lang": "tanglish",
+  "series": "60-SECOND MONEY",
+  "hook_score": 8,
+  "judge_note": "Salary day is a real, relatable moment, and the Tanglish question feels like a friend asking, not a brochure.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "60-SECOND MONEY",
+      "headline": "Salary vandhachu. SIP date fix panniteengala?",
+      "subhead": "Maadha maadham same date, same amount. Chinna habit, periya relief.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "How SIP works, simply",
+      "icon": "calendar",
+      "points": [
+        {
+          "title": "Same day, every month",
+          "text": "Pick an amount and a date, like the 10th or 15th. It goes out automatically."
+        },
+        {
+          "title": "Small amounts add up",
+          "text": "₹5,000 monthly for ten years means ₹6 lakh invested. Illustration, not a return."
+        },
+        {
+          "title": "Paati did this too",
+          "text": "Chits, RDs, gold coins: Paati saved steadily. SIP is one more way to continue."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Send this to your 'next month' friend.",
+      "cta": "Save and share when salary lands.",
+      "footnote": "Size matters less than start date. Mutual funds are subject to market risks."
+    }
+  ],
+  "caption": "Paati chit date maariye, unga SIP date-um fix pannunga.\n\nSmall amount, same day, no guessing. Mutual funds are subject to market risks.\n\nWhat did your Amma or Appa save every month?\n\n#Chennai #NammaChennai #SIP #MoneyHabits #TamilNadu #ChennaiFamilies #MutualFunds",
+  "translation_en": "Salary came in. Have you fixed your SIP date? / Every month the same date, the same amount. Small habit, big relief. / Like Paati's chit date, fix your SIP date too."
+}

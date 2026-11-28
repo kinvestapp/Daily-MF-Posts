@@ -1,0 +1,45 @@
+{
+  "hook": "community_fomo",
+  "topic": "Traditional savings (gold, chits, FDs, LIC) and where mutual funds can fit, explained neutrally",
+  "segment": "chennai_tn",
+  "lang": "en",
+  "series": "NAMMA CHENNAI SAVES",
+  "hook_score": 7,
+  "judge_note": "Three short beats (keep the gold, keep the chit, add one habit) feel reassuring and communal, and nothing is attacked.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NAMMA CHENNAI SAVES",
+      "headline": "Keep the gold. Keep the chit. Add one habit.",
+      "subhead": "Mutual funds don't replace your savings. They sit beside them.",
+      "icon": "handshake"
+    },
+    {
+      "kind": "value",
+      "title": "Mutual funds alongside your other savings",
+      "icon": "handshake",
+      "points": [
+        {
+          "title": "Gold is still gold",
+          "text": "Jewellery, heirlooms, Deepavali purchases. Nothing here says stop. Gold keeps its place."
+        },
+        {
+          "title": "FDs, chits, insurance stay",
+          "text": "They serve goals you already know. A mutual fund is one more tool in the box."
+        },
+        {
+          "title": "Each tool, one job",
+          "text": "Gold for tradition, FDs for stability, SIPs for long-term goals. Each has a purpose."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Send to someone who says 'I have gold'.",
+      "cta": "Not replacing anything. Just adding one more way to save.",
+      "footnote": "Mutual funds are subject to market risks. Read all scheme related documents carefully."
+    }
+  ],
+  "caption": "Nobody is asking you to sell the gold.\n\nMutual funds can sit beside gold, FDs and chits, each with its own job.\n\nWhat other ways does your family save?\n\n#Chennai #NammaChennai #TraditionalSavings #SIP #MutualFunds #FamilyPlanning #TamilNadu",
+  "translation_en": ""
+}

@@ -1,0 +1,45 @@
+{
+  "hook": "start_early",
+  "topic": "A wedding in the family in 3 years: a goal-based monthly plan",
+  "segment": "chennai_tn",
+  "lang": "en",
+  "series": "SALARY DAY",
+  "hook_score": 7,
+  "judge_note": "A concrete 36-month countdown to a cousin's wedding is clear and local, and the tone is calm rather than fearful.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "SALARY DAY",
+      "headline": "Cousin's wedding is 36 months away. Plan it calmly.",
+      "subhead": "Every family function is a goal, and every goal needs a start date.",
+      "icon": "calendar"
+    },
+    {
+      "kind": "value",
+      "title": "Plan for a wedding three years away",
+      "icon": "target",
+      "points": [
+        {
+          "title": "Pick your target amount",
+          "text": "Decide what you want to gift or contribute. Set that number first."
+        },
+        {
+          "title": "Divide by 36 months",
+          "text": "₹3 lakh over 36 months is about ₹8,300 monthly, before market ups and downs."
+        },
+        {
+          "title": "Start now, breathe later",
+          "text": "Each month you wait, the monthly amount needed rises. Starting today means smaller bites."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Save this for the next family gathering.",
+      "cta": "Share with the sibling or cousin who's planning ahead.",
+      "footnote": "Three years is short, so match funds to your risk. Market risks apply."
+    }
+  ],
+  "caption": "The best wedding gift is a calm monthly plan.\n\nDividing a goal by 36 months makes it feel lighter. Market risks apply.\n\nWhose wedding are you planning ahead for?\n\n#Chennai #NammaChennai #SIP #FamilyGoals #TamilNadu #ChennaiFamilies #MoneyHabits",
+  "translation_en": ""
+}

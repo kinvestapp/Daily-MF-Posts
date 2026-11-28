@@ -1,0 +1,45 @@
+{
+  "hook": "pride",
+  "topic": "Small shop and business owners in Chennai: keeping a personal SIP separate from business cash",
+  "segment": "chennai_tn",
+  "lang": "en",
+  "series": "NAMMA CHENNAI SAVES",
+  "hook_score": 8,
+  "judge_note": "Counting the till every evening is a vivid scene for a Chennai shop owner, and it leads naturally to tomorrow's savings.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NAMMA CHENNAI SAVES",
+      "headline": "Every evening you count the till. What about tomorrow's?",
+      "subhead": "Business cash feeds today. A personal SIP can build for later.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Why business owners may want a personal SIP",
+      "icon": "shield",
+      "points": [
+        {
+          "title": "Business cash: today's needs",
+          "text": "Payroll, stock, rent, GST. It must stay liquid and ready, so keep it separate."
+        },
+        {
+          "title": "Personal goals, long term",
+          "text": "Retirement, your child's college. Business cash shouldn't carry these. A SIP can help fill that gap."
+        },
+        {
+          "title": "Same discipline, calmer future",
+          "text": "You already run a business routine. A personal SIP is one more date on your calendar."
+        }
+      ]
+    },
+    {
+      "kind": "cta",
+      "headline": "Save this for your accountant or business friend.",
+      "cta": "Share the idea of a separate personal pot.",
+      "footnote": "Separate pots keep things clear. Mutual funds are subject to market risks."
+    }
+  ],
+  "caption": "Your shop has a till.\n\nYour future needs one too. Business cash feeds now. A personal SIP can build for later.\n\nWhat does your personal savings plan look like?\n\n#Chennai #NammaChennai #SmallBusiness #SIP #MoneyHabits #TamilNadu #ChennaiFamilies",
+  "translation_en": ""
+}
