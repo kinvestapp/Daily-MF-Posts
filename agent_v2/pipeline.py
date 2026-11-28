@@ -70,6 +70,7 @@ def main():
             print(f"[queue] using {queued['queue_id']} ({len(remaining(date_str)) - 1} left after this one)")
 
     post, paths, issues = None, [], ["not started"]
+    tried = set()
     for attempt in range(1, MAX_RENDER_ATTEMPTS + 1):
         if args.sample:
             post = json.load(open(ROOT / "agent_v2" / "fixtures" / "sample_post.json", encoding="utf-8"))
@@ -82,8 +83,12 @@ def main():
             break
         print(f"[qa] attempt {attempt} failed: {issues}")
         shutil.rmtree(day_dir, ignore_errors=True)
-        if queued is not None:   # a queued post cannot be regenerated; fail loudly instead of publishing it broken
-            break
+        if queued is not None:   # a broken queued post is skipped; try the next one in the queue
+            tried.add(queued["queue_id"])
+            queued = next_item(exclude_date=date_str, skip=tried)
+            if queued is None:
+                break
+            print(f"[queue] layout failed, switching to {queued['queue_id']}")
     if issues:
         raise RuntimeError(f"Quality gate failed after {MAX_RENDER_ATTEMPTS} attempts: {issues}")
 

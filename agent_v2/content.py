@@ -88,8 +88,13 @@ def _words(s):
     return len(str(s).split())
 
 
+# Hard limits = what the layout was measured to hold. The prompt asks for tighter targets so small overshoots pass.
+HARD = {"kicker": 4, "headline": 10, "subhead": 18, "value_title": 8, "point_title": 5, "point_text": 18,
+        "cta_headline": 9, "cta": 12, "footnote": 14}
+
+
 def validate_hook(h):
-    for key, mx in (("kicker", 4), ("headline", 9), ("subhead", 16)):
+    for key, mx in (("kicker", HARD["kicker"]), ("headline", HARD["headline"]), ("subhead", HARD["subhead"])):
         if _words(h.get(key, "")) > mx:
             raise ValueError(f"hook.{key} exceeds {mx} words")
     if not h.get("headline"):
@@ -103,15 +108,16 @@ def validate_shape(post):
         raise ValueError("slides must be exactly three objects with kind hook, value, cta in that order")
     hook, value, cta = slides
     validate_hook(hook)
-    for slide, key, mx in ((value, "title", 8), (cta, "headline", 8), (cta, "cta", 10), (cta, "footnote", 14)):
+    for slide, key, mx in ((value, "title", HARD["value_title"]), (cta, "headline", HARD["cta_headline"]),
+                           (cta, "cta", HARD["cta"]), (cta, "footnote", HARD["footnote"])):
         if _words(slide.get(key, "")) > mx:
             raise ValueError(f"{slide['kind']}.{key} exceeds {mx} words")
     pts = value.get("points")
     if not isinstance(pts, list) or len(pts) != 3:
         raise ValueError("value.points must have exactly 3 items")
     for p in pts:
-        if _words(p.get("title", "")) > 4 or _words(p.get("text", "")) > 16 or not p.get("title"):
-            raise ValueError("a value point violates the title<=4 / text<=16 word limits")
+        if _words(p.get("title", "")) > HARD["point_title"] or _words(p.get("text", "")) > HARD["point_text"] or not p.get("title"):
+            raise ValueError(f"a value point violates the title<={HARD['point_title']} / text<={HARD['point_text']} word limits")
     for s in (hook, value):
         if s.get("icon") not in ICONS:
             s["icon"] = "growth"

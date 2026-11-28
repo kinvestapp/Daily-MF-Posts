@@ -32,12 +32,12 @@ def used_ids(exclude_date=None):
     return ids
 
 
-def next_item(exclude_date=None):
+def next_item(exclude_date=None, skip=()):
     """Return the first valid unused queue post (with 'queue_id'), or None."""
     used = used_ids(exclude_date)
     for f in sorted(glob.glob(str(QUEUE / "*.json"))):
         qid = Path(f).stem
-        if qid in used:
+        if qid in used or qid in skip:
             continue
         post = json.load(open(f, encoding="utf-8"))
         try:
