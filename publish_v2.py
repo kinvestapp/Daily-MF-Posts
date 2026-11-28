@@ -138,7 +138,7 @@ def main():
 
     # --- Instagram Reel (a failure here must not undo the carousel) ---
     reel = meta.get("reel")
-    if reel and os.path.exists(reel) and os.environ.get("PUBLISH_REEL", "1") == "1":
+    if reel and os.path.exists(reel) and os.environ.get("PUBLISH_REEL", "1") == "1" and not meta["published"].get("instagram_reel_id"):
         try:
             meta["published"]["instagram_reel_id"] = publish_reel(ig_id, token, reel, caption)
             print("Reel:", meta["published"]["instagram_reel_id"])
