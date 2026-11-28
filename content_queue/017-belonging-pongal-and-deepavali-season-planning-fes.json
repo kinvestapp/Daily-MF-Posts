@@ -1,0 +1,45 @@
+{
+  "hook": "belonging",
+  "topic": "Pongal and Deepavali season: planning festival spending without derailing your SIP",
+  "segment": "chennai_tn",
+  "lang": "en",
+  "series": "NAMMA CHENNAI SAVES",
+  "hook_score": 8,
+  "judge_note": "The best candidate was local but scored about 7 because its subhead was generic. A concrete festival scene lifts it.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NAMMA CHENNAI SAVES",
+      "headline": "Pongal sarees, sweets, gifts. SIP date still the 15th.",
+      "subhead": "Keep festival money and SIP money in two separate pots, and enjoy both.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Festival Season, Two Pots",
+      "points": [
+        {
+          "title": "Pot 1: SIP locked",
+          "text": "Same date, same amount. If your SIP is the 15th, that date never changes."
+        },
+        {
+          "title": "Pot 2: Festival money",
+          "text": "Bonus, extra savings, Diwali allowance. This is separate. This can flex."
+        },
+        {
+          "title": "Decide before spending",
+          "text": "Before festival season, write down: how much is for investing, how much for celebration."
+        }
+      ],
+      "icon": "coin"
+    },
+    {
+      "kind": "cta",
+      "headline": "Plan this before Pongal arrives.",
+      "cta": "Save this. Show it to Amma or spouse today.",
+      "footnote": "Two pots. Two rules. No conflict this season."
+    }
+  ],
+  "caption": "Festival and investing are not enemies. They are separate conversations. Pongal money, Deepavali money, and your SIP date all exist in the same season. How does your family split them? Share in comments.",
+  "translation_en": ""
+}

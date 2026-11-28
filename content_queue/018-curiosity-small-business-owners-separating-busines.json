@@ -1,0 +1,45 @@
+{
+  "hook": "curiosity",
+  "topic": "Small business owners: separating business cash from personal investing",
+  "segment": "south_india",
+  "lang": "en",
+  "series": "60-SECOND MONEY",
+  "hook_score": 8,
+  "judge_note": "The best candidate scored about 5 because it was abstract and generic. A cash drawer versus a college fund is a scene shop owners recognise.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "60-SECOND MONEY",
+      "headline": "Shop cash drawer. Child's college fund. Two different things.",
+      "subhead": "Keep business money and family goal money in separate accounts, so each stays clear.",
+      "icon": "handshake"
+    },
+    {
+      "kind": "value",
+      "title": "Shop Owner's Split",
+      "points": [
+        {
+          "title": "Business cash flow",
+          "text": "Covers stock, rent, staff, daily needs. This is working capital."
+        },
+        {
+          "title": "Personal investment account",
+          "text": "Builds your family goal. Education, house, retirement. Separate tap."
+        },
+        {
+          "title": "Open a second account",
+          "text": "If confusion happens, ask your bank to create one. Write the purpose down."
+        }
+      ],
+      "icon": "coin"
+    },
+    {
+      "kind": "cta",
+      "headline": "Show this to your accountant.",
+      "cta": "Save this. Talk through it at your next meeting.",
+      "footnote": "Business needs cash. Family needs habit. Two pots protect both."
+    }
+  ],
+  "caption": "Business money runs your shop. Personal money builds your family goal. Two accounts, two purposes, one clear head. How do you separate your business cash today? Comment and let us know.",
+  "translation_en": ""
+}
