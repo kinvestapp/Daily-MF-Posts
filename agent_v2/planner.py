@@ -160,12 +160,58 @@ def assemble(d, a, j):
     return post, None
 
 
+BODY_LIMITS = [("value", "title", 8), ("cta", "headline", 8), ("cta", "cta", 10), ("cta", "footnote", 14)]
+
+
+def _n(t):
+    return len(str(t).split())
+
+
+def precheck(d):
+    """Cheap code checks before the judge. Drops over-long hook candidates and returns exact, fixable problems."""
+    problems = []
+    cands = [c for c in d.get("hook_candidates") or [] if isinstance(c, dict) and c.get("headline")
+             and _n(c["headline"]) <= 9 and _n(c.get("subhead", "")) <= 16]
+    if len(cands) < 2:
+        problems.append("hook candidates: headline max 9 words, subhead max 16 words; most of yours were longer")
+    d["hook_candidates"] = cands
+    slides = {s.get("kind"): s for s in d.get("slides") or [] if isinstance(s, dict)}
+    if set(slides) != {"value", "cta"}:
+        return problems + ["slides must be exactly one value object and one cta object"]
+    for kind, key, mx in BODY_LIMITS:
+        if _n(slides[kind].get(key, "")) > mx:
+            problems.append(f"{kind}.{key} has {_n(slides[kind][key])} words (max {mx}): '{slides[kind][key]}'")
+    pts = slides["value"].get("points") or []
+    if len(pts) != 3:
+        problems.append("value.points must have exactly 3 items")
+    for p in pts:
+        if _n(p.get("title", "")) > 4:
+            problems.append(f"point title has {_n(p.get('title'))} words (max 4): '{p.get('title')}'")
+        if _n(p.get("text", "")) > 16:
+            problems.append(f"point text has {_n(p.get('text'))} words (max 16): '{p.get('text')}'")
+    if "?" not in d.get("caption", ""):
+        problems.append("caption needs one question inviting a comment")
+    return problems
+
+
 def run_round(assignments, feedback=None):
     drafts = write_batch(assignments, feedback)
-    verdicts = judge(drafts, assignments)
-    ok, bad = {}, {}
-    for i, (d, a) in enumerate(zip(drafts, assignments), 1):
-        post, why = assemble(d, a, verdicts.get(i, {}))
+    fix = {i: pr for i, d in enumerate(drafts, 1) if (pr := precheck(d))}
+    if fix:
+        print(f"[planner] fixing length/shape in {len(fix)} draft(s) before judging")
+        order = sorted(fix)
+        redone = write_batch([assignments[i - 1] for i in order], {k + 1: fix[i] for k, i in enumerate(order)})
+        for i, d in zip(order, redone):
+            if not (pr := precheck(d)):
+                drafts[i - 1] = d
+                del fix[i]
+            else:
+                fix[i] = pr
+    good = [i for i in range(1, len(drafts) + 1) if i not in fix]
+    verdicts = judge([drafts[i - 1] for i in good], [assignments[i - 1] for i in good])
+    ok, bad = {}, {i: pr for i, pr in fix.items()}
+    for pos, i in enumerate(good, 1):
+        post, why = assemble(drafts[i - 1], assignments[i - 1], verdicts.get(pos, {}))
         if why:
             bad[i] = [why]
         else:
