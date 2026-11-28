@@ -51,7 +51,7 @@ LANGUAGE:
 - lang=en: simple Indian English.
 - lang=tanglish: the hook headline, subhead and caption line 1 mix Tamil words written in ENGLISH LETTERS with English,
   the way people in Chennai type on Instagram ('Salary vandhachu. SIP date fix panniteengala?'). Natural, warm,
-  respectful (use 'neenga' forms), never slangy or crude, no Tamil script. Slide 2 and slide 3 stay in simple English.
+  respectful (use 'neenga' forms), never slangy or crude, NO Hindi words, no Tamil script. Slide 2 and slide 3 stay in simple English.
   Add an English translation of every Tanglish line in "translation_en".
 """
 

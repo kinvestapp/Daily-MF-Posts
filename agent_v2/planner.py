@@ -47,24 +47,27 @@ caption that work with any of them. Do NOT write the kicker; the series label is
 OUTPUT: ONLY a raw JSON array, one object per assignment in order, each exactly this shape:
 """ + BATCH_SHAPE)
 
-JUDGE_SYSTEM = """You are the creative director AND compliance reviewer for K-Invest.app's Instagram (Indian mutual fund
-distributor, audience mainly Chennai). For each numbered post:
-1. Pick the hook candidate most likely to make a 28-40 year old salaried Chennai parent stop scrolling. Score it 1-10:
-   specificity (a real scene, person or moment), tension or curiosity gap, emotional pull (belonging, hope, pride,
-   positive FOMO), instantly clear in one second, feels local, sounds like a person not a brochure.
-   9-10 = you would screenshot it. 5 = generic AMC/bank copy. Be harsh: generic copy scores 5 or less.
-2. If the best candidate scores below 8, write a better headline (max 9 words) and subhead (max 16 words) yourself,
-   same idea and same language (Tanglish = Tamil words in English letters mixed with English, respectful 'neenga'
-   forms, no Tamil script), and score that instead.
-3. Optionally rewrite the caption's FIRST line (max 12 words) if it is weak. Keep it different from the headline.
-4. Compliance/accuracy: ok=false if anything implies returns, safety, guarantees or approval; uses fear, shame or
-   urgency to buy; attacks gold, FDs, chits, banks or AMCs; invents statistics or testimonials; states a wrong fact
-   about Indian mutual funds, KYC, tax or liquidity; Tanglish is unnatural, disrespectful or its translation_en does
-   not match. A weak hook is NOT a compliance issue; fix it with step 2 instead.
+JUDGE_SYSTEM = """You are the creative director, line editor AND compliance reviewer for K-Invest.app's Instagram (Indian
+mutual fund distributor, audience mainly Chennai). Each numbered draft has hook candidates plus a body written by a
+junior writer. For each one:
+1. Pick the hook candidate most likely to make a 28-40 year old salaried Chennai parent stop scrolling, or write a
+   better one yourself (same idea, same language). Score the FINAL hook 1-10: specificity (a real scene, person or
+   moment), tension or curiosity gap, emotional pull (belonging, hope, pride, positive FOMO), clear in one second,
+   feels local, sounds like a person not a brochure. 9-10 = you would screenshot it. Generic AMC/bank copy is 5 or less.
+2. Edit the whole post into its FINAL form. Tighten every line to the HARD word limits below (count the words), keep
+   the meaning, make slide 2 concrete and useful, keep the CTA a share/save prompt, remove any dash characters
+   (em dash, en dash). Caption: line 1 a hook different from the headline, 1-2 short lines, one easy question,
+   5-7 hashtags. Tanglish (lang=tanglish): Tamil words in English letters mixed with English, respectful 'neenga'
+   forms, NO Hindi words, no Tamil script; only headline, subhead and caption line 1 are Tanglish; give translation_en.
+3. Compliance/accuracy after your edits: ok=false only if a problem remains that you could not fix: implied returns,
+   safety, guarantees or approval; fear, shame or urgency to buy; attacking gold, FDs, chits, banks or AMCs; invented
+   statistics or testimonials; a wrong fact about Indian mutual funds, KYC, tax or liquidity.
+HARD WORD LIMITS: headline 9, subhead 16, value title 8, point title 4, point text 16, cta headline 8, cta 10, footnote 14.
 Respond ONLY with raw JSON:
-{"results": [{"id": <n>, "best": <candidate index from 1>, "score": <1-10>, "headline": "<final headline>",
-  "subhead": "<final subhead>", "caption_first_line": "<new first line or empty>", "why": "<one short reason>",
-  "ok": true|false, "issues": ["short reason", ...]}]}"""
+{"results": [{"id": <n>, "score": <1-10>, "why": "<one short reason>", "ok": true|false, "issues": ["..."],
+  "final": {"headline": "...", "subhead": "...", "value": {"title": "...", "points": [{"title": "...", "text": "..."},
+  {"title": "...", "text": "..."}, {"title": "...", "text": "..."}]}, "cta": {"headline": "...", "cta": "...",
+  "footnote": "..."}, "caption": "...", "translation_en": "..."}}]}"""
 
 
 def _json(text, opener):
@@ -153,24 +156,26 @@ def tidy_caption(caption, new_first="", segment="chennai_tn"):
 
 
 def assemble(d, a, j):
-    """Build the final post from a draft and the judge's verdict. Returns (post, problem or None)."""
+    """Build the final post from the editor's verdict. Returns (post, problem or None)."""
+    if not j:
+        return None, "not judged (editor reply unusable); write it again"
     try:
-        cands = d["hook_candidates"]
-        best = cands[max(0, min(len(cands) - 1, int(j.get("best", 1)) - 1))]
-        hook = {"kind": "hook", "kicker": series_for(a["hook"], a["segment"]),
-                "headline": j.get("headline") or best["headline"], "subhead": j.get("subhead") or best.get("subhead", ""),
-                "icon": d.get("hook_icon", "growth")}
-        validate_hook(hook)
-        caption = tidy_caption(d["caption"], j.get("caption_first_line", ""), a["segment"])
-        post = {"slides": [hook] + list(d["slides"]), "caption": caption, "translation_en": d.get("translation_en", "")}
+        f = j["final"]
+        slides = {x.get("kind"): x for x in d.get("slides", []) if isinstance(x, dict)}
+        hook = {"kind": "hook", "kicker": series_for(a["hook"], a["segment"]), "headline": dedash(f["headline"]),
+                "subhead": dedash(f.get("subhead", "")), "icon": d.get("hook_icon", "growth")}
+        value = {"kind": "value", "title": dedash(f["value"]["title"]), "icon": slides.get("value", {}).get("icon", "growth"),
+                 "points": [{"title": dedash(p["title"]), "text": dedash(p["text"])} for p in f["value"]["points"]]}
+        cta = {"kind": "cta", "headline": dedash(f["cta"]["headline"]), "cta": dedash(f["cta"]["cta"]),
+               "footnote": dedash(f["cta"].get("footnote", ""))}
+        post = {"slides": [hook, value, cta], "caption": tidy_caption(dedash(f["caption"]), "", a["segment"]),
+                "translation_en": dedash(f.get("translation_en", ""))}
         validate_shape(post)
         issues = lint_post(post) + lint_post({"caption": post["translation_en"]})
         if issues:
             return None, f"compliance patterns matched: {issues}"
     except (ValueError, KeyError, AttributeError, TypeError, IndexError) as e:
-        return None, str(e)
-    if not j:
-        return None, "not judged (judge reply unusable); write it again"
+        return None, f"editor output unusable: {e}"
     if not j.get("ok", False):
         return None, "; ".join(j.get("issues") or ["reviewer rejected"])
     if int(j.get("score", 0)) < MIN_SCORE:
@@ -178,6 +183,13 @@ def assemble(d, a, j):
     post.update({"hook": a["hook"], "topic": a["topic"], "segment": a["segment"], "lang": a.get("lang", "en"),
                  "series": hook["kicker"], "hook_score": int(j["score"]), "judge_note": j.get("why", "")})
     return post, None
+
+
+def dedash(t):
+    """House style: no em/en dashes. ' - ' style breaks become commas; ranges become hyphens."""
+    import re as _re
+    t = _re.sub(r"\s*[\u2014\u2013]\s+", ", ", str(t))
+    return _re.sub(r"[\u2014\u2013]", "-", t)
 
 
 BODY_LIMITS = [("value", "title", HARD["value_title"]), ("cta", "headline", HARD["cta_headline"]),
@@ -217,20 +229,14 @@ def precheck(d):
 
 def run_round(assignments, feedback=None):
     drafts = write_batch(assignments, feedback)
-    fix = {i: pr for i, d in enumerate(drafts, 1) if (pr := precheck(d))}
-    if fix:
-        print(f"[planner] fixing length/shape in {len(fix)} draft(s) before judging")
-        order = sorted(fix)
-        redone = write_batch([assignments[i - 1] for i in order], {k + 1: fix[i] for k, i in enumerate(order)})
-        for i, d in zip(order, redone):
-            if not (pr := precheck(d)):
-                drafts[i - 1] = d
-                del fix[i]
-            else:
-                fix[i] = pr
-    good = [i for i in range(1, len(drafts) + 1) if i not in fix]
+    broken = {}
+    for i, d in enumerate(drafts, 1):
+        precheck(d)                                   # drops over-long hook candidates
+        if not d.get("hook_candidates") or len(d.get("slides") or []) != 2:
+            broken[i] = ["draft missing hook candidates or the value/cta slides"]
+    good = [i for i in range(1, len(drafts) + 1) if i not in broken]
     verdicts = judge([drafts[i - 1] for i in good], [assignments[i - 1] for i in good])
-    ok, bad = {}, {i: pr for i, pr in fix.items()}
+    ok, bad = {}, dict(broken)
     for pos, i in enumerate(good, 1):
         post, why = assemble(drafts[i - 1], assignments[i - 1], verdicts.get(pos, {}))
         if why:
