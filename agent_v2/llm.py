@@ -79,6 +79,15 @@ def _log(model, purpose, tin, tout):
     return row
 
 
+_rejects_thinking_off = set()
+
+
+def _send(**kwargs):
+    """Stream the reply: the SDK refuses large non-streaming requests (over about 21k max_tokens)."""
+    with _get_client().messages.stream(**kwargs) as stream:
+        return stream.get_final_message()
+
+
 def call(models, system, messages, max_tokens, purpose):
     """Call the first model that exists. Returns the response text."""
     global _calls_this_run
@@ -86,16 +95,17 @@ def call(models, system, messages, max_tokens, purpose):
     for model in models:
         _check_limits()
         kwargs = dict(model=model, max_tokens=max_tokens, system=system, messages=messages)
-        if _thinking_off:
+        if _thinking_off and model not in _rejects_thinking_off:
             kwargs["thinking"] = {"type": "disabled"}   # plain writing/review tasks: do not pay for extended thinking
         try:
             try:
-                msg = _get_client().messages.create(**kwargs)
+                msg = _send(**kwargs)
             except Exception as e:
                 if "thinking" in kwargs and getattr(e, "status_code", None) == 400 and "thinking" in str(e).lower():
                     print("[llm] model does not accept thinking=disabled; retrying without it")
                     kwargs.pop("thinking")
-                    msg = _get_client().messages.create(**kwargs)
+                    _rejects_thinking_off.add(model)
+                    msg = _send(**kwargs)
                 else:
                     raise
         except Exception as e:  # unknown model id -> try the next one; anything else is a real error
