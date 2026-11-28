@@ -105,16 +105,28 @@ def write_batch(assignments, feedback=None):
     return out
 
 
+JUDGE_CHUNK = 5
+JUDGE_TOKENS = 24000   # the judge model reasons before answering; billed only for what it uses
+
+
 def judge(drafts, assignments):
-    """One call: pick/improve the hook, score it, and review compliance. Returns {position: result}."""
-    payload = []
-    for i, (d, a) in enumerate(zip(drafts, assignments), 1):
-        payload.append({"id": i, "lang": a.get("lang", "en"), "audience": a["segment"], "hook_type": a["hook"],
-                        "candidates": d.get("hook_candidates", []), "slides": d.get("slides", []),
-                        "caption": d.get("caption", ""), "translation_en": d.get("translation_en", "")})
-    text = llm.call(llm.REVIEW_MODELS, JUDGE_SYSTEM, [{"role": "user", "content": json.dumps(payload, ensure_ascii=False)}],
-                    max_tokens=3000 + 700 * len(drafts), purpose="planner-judge")
-    return {r["id"]: r for r in _json(text, "{")["results"]}
+    """Pick/improve the hook, score it, and review compliance, JUDGE_CHUNK posts per call.
+    Returns {position: result}; a chunk whose verdict is unusable gets no entry (those posts are retried)."""
+    out = {}
+    for k in range(0, len(drafts), JUDGE_CHUNK):
+        payload = []
+        for i, (d, a) in enumerate(zip(drafts[k:k + JUDGE_CHUNK], assignments[k:k + JUDGE_CHUNK]), k + 1):
+            payload.append({"id": i, "lang": a.get("lang", "en"), "audience": a["segment"], "hook_type": a["hook"],
+                            "candidates": d.get("hook_candidates", []), "slides": d.get("slides", []),
+                            "caption": d.get("caption", ""), "translation_en": d.get("translation_en", "")})
+        try:
+            text = llm.call(llm.REVIEW_MODELS, JUDGE_SYSTEM,
+                            [{"role": "user", "content": json.dumps(payload, ensure_ascii=False)}],
+                            max_tokens=JUDGE_TOKENS, purpose="planner-judge")
+            out.update({int(r["id"]): r for r in _json(text, "{")["results"]})
+        except (llm.Truncated, ValueError, KeyError, json.JSONDecodeError) as e:
+            print(f"[planner] judge chunk {k // JUDGE_CHUNK + 1} unusable: {e}")
+    return out
 
 
 def assemble(d, a, j):
@@ -137,6 +149,8 @@ def assemble(d, a, j):
             return None, f"compliance patterns matched: {issues}"
     except (ValueError, KeyError, AttributeError, TypeError, IndexError) as e:
         return None, str(e)
+    if not j:
+        return None, "not judged (judge reply unusable); write it again"
     if not j.get("ok", False):
         return None, "; ".join(j.get("issues") or ["reviewer rejected"])
     if int(j.get("score", 0)) < MIN_SCORE:
