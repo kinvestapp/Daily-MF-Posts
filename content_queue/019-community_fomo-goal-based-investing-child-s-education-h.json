@@ -1,0 +1,45 @@
+{
+  "hook": "community_fomo",
+  "topic": "Goal-based investing: child's education, house, wedding, retirement",
+  "segment": "chennai_tn",
+  "lang": "tanglish",
+  "series": "NAMMA CHENNAI SAVES",
+  "hook_score": 8,
+  "judge_note": "Candidate 2 had the most concrete Chennai calendar moments, but it was English-only and read like a brochure line. I rewrote it in real Tanglish with a respectful neenga form.",
+  "slides": [
+    {
+      "kind": "hook",
+      "kicker": "NAMMA CHENNAI SAVES",
+      "headline": "School fees June-la. Kalyanam next year. Plan ready-ah?",
+      "subhead": "Neenga each goal-kum oru chinna date, oru chinna amount fix pannalaam.",
+      "icon": "target"
+    },
+    {
+      "kind": "value",
+      "title": "Three truths about goals.",
+      "points": [
+        {
+          "title": "Pick one first.",
+          "text": "Wedding, house, college, or retirement. Choose the one that matters most this year."
+        },
+        {
+          "title": "Break it into rupees.",
+          "text": "If the goal is 5 lakh in 3 years, that is 13,888 per month. For illustration only."
+        },
+        {
+          "title": "Start now or start later.",
+          "text": "The same goal costs different amounts depending on when you begin. The maths is simple."
+        }
+      ],
+      "icon": "target"
+    },
+    {
+      "kind": "cta",
+      "headline": "Which goal matters most this year?",
+      "cta": "Save this. Share with family on payday.",
+      "footnote": "Goal planning is personal. This is a conversation, not advice."
+    }
+  ],
+  "caption": "Paati-oda gold, Appa-oda FD. Neenga first edhu?\n\nAppa's FD. Your goal, your way.\n\nWhat is the first goal you are saving for right now?\n\n#ChennaiFamilies #GoalBasedInvesting #MoneyHabits #TamilNadu #NammaChennai #SavingsHabit #FamilyGoals",
+  "translation_en": "Paati's gold. Appa's FD. Your goal, your way."
+}
