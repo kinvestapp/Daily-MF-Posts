@@ -10,73 +10,73 @@ import random
 HOOKS = {
     "belief": {
         "angle": "Identity and values: disciplined, patient, long-term investors; 'this is who we are'.",
-        "example": "Wealth is built in the boring months nobody posts about.",
+        "example": "Chennai's quiet savers never post about it. They just never skip the 5th.",
     },
     "hope": {
         "angle": "Aspiration through small steady steps; future self; time in the market.",
-        "example": "Your future self is quietly grateful for today's SIP.",
+        "example": "Her college fee is 15 Junes away. One small envelope a month.",
     },
     "curiosity": {
         "angle": "Information gap: tease a useful insight the reader will want to open the carousel for.",
-        "example": "The one SIP habit that matters more than the amount.",
+        "example": "The salary-day habit Chennai parents rarely talk about.",
     },
     "awe": {
         "angle": "A surprising but factual illustration of compounding or time (arithmetic only, no return %).",
-        "example": "Rs 5,000 a month for 20 years is Rs 12 lakh of your own money invested.",
+        "example": "Rs 3,000 a month from first job to 60 is Rs 12.6 lakh of your own savings.",
     },
     "humor": {
         "angle": "Light, kind humor about procrastination or money habits. Never mock the reader.",
-        "example": "'I'll start my SIP next month' (said every month).",
+        "example": "Me every 1st: SIP from next month. Me every 30th: same.",
     },
     "empathy": {
         "angle": "Acknowledge real money worries families share (rising costs, EMIs, school fees, parents' health) and show a calm first step. Normalise it.",
-        "example": "Juggling EMIs, school fees and savings is hard. Starting small is still starting.",
+        "example": "Rent, school fees, Amma's medicines. And still, Rs 500 a month counts.",
     },
     "belonging": {
         "angle": "Families across Tamil Nadu and India building wealth patiently, one SIP at a time. No fake numbers or testimonials.",
-        "example": "Families across India invest a little every month. You can too.",
+        "example": "Velachery to Tambaram, families are quietly fixing a SIP date.",
     },
     "nostalgia": {
         "angle": "Our parents' savings habits, and what today's options add on top.",
-        "example": "Our parents saved in gold, chits and FDs. Our generation can add patient investing.",
+        "example": "Amma saved in gold. Appa saved in FDs. What will your kids say you saved in?",
     },
     "pride": {
         "angle": "Pride in building for your family: your first salary, your first SIP, your first goal.",
-        "example": "Your first salary, your first SIP, your first goal: all yours.",
+        "example": "Your first salary bought sweets for everyone. Your second can start your SIP.",
     },
     "authority": {
         "angle": "Plain-language expert explanation of how something works; credibility through clarity.",
-        "example": "Expense ratio explained in 20 seconds.",
+        "example": "Expense ratio, explained before your filter coffee cools.",
     },
     "relief": {
         "angle": "Remove a pain: paperwork, jargon, uncertainty. Show how simple the first step is (KYC, SIP set-up).",
-        "example": "KYC and SIP set-up, explained without the jargon.",
+        "example": "KYC sounds scary. It is mostly one form.",
     },
     "start_early": {
         "angle": "Soft FOMO: the cost of starting late versus early, shown as a neutral illustration.",
-        "example": "Starting at 25 vs 35: what ten extra years of time can do.",
+        "example": "Two friends, same salary. One started at 25, one at 35.",
     },
     "community_fomo": {
         "angle": "Positive FOMO through belonging: neighbours, colleagues and families in your city already keep a small monthly habit, and the door is open to join them. Invitation, never pressure: no urgency, no 'you are falling behind', no invented numbers or testimonials.",
-        "example": "Chennai families are quietly building a monthly habit. Your seat at the table is open.",
+        "example": "Chennai families are quietly building a monthly habit. Your seat is open.",
     },
     "myth_buster": {
         "angle": "Contrarian but kind: gently correct a common misconception. Never attack named AMCs or competitors.",
-        "example": "Myth: you need a lot of money to start. Reality: you need a habit.",
+        "example": "Myth: SIPs are for rich people. Fact: they can start small.",
     },
     "surprise_fact": {
         "angle": "A factual 'did you know' that is relevant and verifiable. No alarmism.",
-        "example": "Did you know inflation quietly reduces what idle savings can buy?",
+        "example": "Prices rise quietly every year. Idle cash notices first.",
     },
     "scarcity_of_time": {
         "angle": "Time is the scarce resource, not money. Positive nudge to start, never urgency about a fund.",
-        "example": "You cannot buy back time in the market. You can start using it today.",
+        "example": "You cannot buy back the years. You can use this one.",
     },
 }
 
 # Owner priority: emotional hooks of belonging and (positive) FOMO get the most airtime until real data says otherwise.
 # Used as sampling weights when the strategist is rotating or exploring; exploitation is driven by measured results.
-HOOK_PRIOR = {"community_fomo": 4, "belonging": 4, "start_early": 3, "hope": 2, "empathy": 2, "pride": 2, "nostalgia": 2}
+HOOK_PRIOR = {"community_fomo": 6, "belonging": 6, "start_early": 3, "hope": 2, "empathy": 2, "pride": 2, "nostalgia": 2}
 
 # Audience segments, in the owner's priority order. The weight is the share of posts aimed at each.
 # Content is mainly for domestic investors; NRIs are welcome but secondary.
@@ -101,6 +101,11 @@ TOPICS = [
     ("Planning a child's college admission and fees years ahead, goal by goal", "chennai_tn"),
     ("Small shop and business owners in Chennai: keeping a personal SIP separate from business cash", "chennai_tn"),
     ("Parents' health and retirement: building a calm plan step by step", "chennai_tn"),
+    ("June school fee season: planning next year's fees from this year", "chennai_tn"),
+    ("A wedding in the family in 3 years: a goal-based monthly plan", "chennai_tn"),
+    ("Freelancers and gig workers in Chennai: keeping a SIP with irregular income", "chennai_tn"),
+    ("Couples in Chennai: setting one shared money goal", "chennai_tn"),
+    ("Gold and SIPs: why many Tamil families keep both, explained neutrally", "chennai_tn"),
     ("Rupee cost averaging in plain words", "south_india"),
     ("Expense ratio and why costs matter", "south_india"),
     ("Active vs passive funds, explained simply", "south_india"),
@@ -114,6 +119,22 @@ TOPICS = [
     ("NRI basics: KYC and investing in India from abroad", "nri"),
     ("NRI basics: what FATCA means in plain words", "nri"),
 ]
+
+
+# Named recurring series (the slide-1 kicker) so followers recognise and come back for a format.
+SERIES = {
+    "community_fomo": "NAMMA CHENNAI SAVES", "belonging": "NAMMA CHENNAI SAVES", "empathy": "NAMMA CHENNAI SAVES",
+    "pride": "NAMMA CHENNAI SAVES", "nostalgia": "AMMA'S WAY, OUR WAY", "myth_buster": "MYTH OR FACT",
+    "authority": "60-SECOND MONEY", "relief": "60-SECOND MONEY", "curiosity": "60-SECOND MONEY",
+    "surprise_fact": "60-SECOND MONEY", "awe": "60-SECOND MONEY",
+}
+
+
+def series_for(hook, segment):
+    s = SERIES.get(hook, "SALARY DAY")
+    if s == "NAMMA CHENNAI SAVES" and segment != "chennai_tn":
+        s = "FAMILIES LIKE YOURS"
+    return s
 
 
 def pick_hook(history=None, rng=None):

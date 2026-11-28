@@ -110,7 +110,7 @@ def main():
                 metrics.update(fb_stats(pub["facebook_post_id"], token))
             row = {
                 "date": meta["date"], "media_id": media_id, "window": window,
-                "hook": meta.get("hook"), "topic": meta.get("topic"), "segment": meta.get("segment"), "format": kind, "theme": meta.get("theme", "midnight_gold"),
+                "hook": meta.get("hook"), "topic": meta.get("topic"), "segment": meta.get("segment"), "format": kind, "theme": meta.get("theme", "midnight_gold"), "lang": meta.get("lang", "en"), "series": meta.get("series"), "hook_score": meta.get("hook_score"),
                 "published_at": pub["published_at"],
                 "collected_at": datetime.datetime.utcnow().isoformat() + "Z",
                 "metrics": metrics, **score(metrics),

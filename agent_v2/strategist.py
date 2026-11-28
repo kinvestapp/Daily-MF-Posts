@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 METRICS = ROOT / "data" / "metrics.jsonl"
 MIN_SCORED = 6
 EXPLORE_SHARE = 0.3
+TANGLISH_SHARE = 1 / 3
 
 
 def load_scores():
@@ -53,13 +54,46 @@ def segment_quota(n):
     return quota
 
 
+def nri_recent(days=30):
+    """Owner rule: at most one NRI post a month. True if one was published in the last `days` or is still queued."""
+    import datetime
+    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    for f in glob.glob(str(ROOT / "public" / "posts_v2" / "*.json")):
+        if Path(f).stem >= cutoff:
+            try:
+                if json.load(open(f, encoding="utf-8")).get("segment") == "nri":
+                    return True
+            except (OSError, json.JSONDecodeError):
+                pass
+    used = set()
+    for f in glob.glob(str(ROOT / "public" / "posts_v2" / "*.json")):
+        try:
+            used.add(json.load(open(f, encoding="utf-8")).get("queue_id"))
+        except (OSError, json.JSONDecodeError):
+            pass
+    for f in glob.glob(str(ROOT / "content_queue" / "*.json")):
+        if Path(f).stem not in used:
+            try:
+                if json.load(open(f, encoding="utf-8")).get("segment") == "nri":
+                    return True
+            except (OSError, json.JSONDecodeError):
+                pass
+    return False
+
+
 def plan(n, recent_hooks, recent_topics, rng=None):
     """Return (assignments, hook_table). assignments = [{hook, segment, topic, mode}]."""
     rng = rng or random.Random()
     rows = load_scores()
     htable = table(rows, "hook")
     cold = len(rows) < MIN_SCORED
-    slots = [seg for seg, q in segment_quota(n).items() for _ in range(q)]
+    quota = segment_quota(n)
+    if quota.get("nri", 0) and nri_recent():
+        quota["chennai_tn"] += quota.pop("nri")
+    elif quota.get("nri", 0) > 1:
+        quota["chennai_tn"] += quota["nri"] - 1
+        quota["nri"] = 1
+    slots = [seg for seg, q in quota.items() for _ in range(q)]
     rng.shuffle(slots)
 
     # Exploit only hooks with at least 2 results (when any qualify) that score within 60% of the best one.
@@ -69,9 +103,10 @@ def plan(n, recent_hooks, recent_topics, rng=None):
     top = [h for h in ranked[:3] if htable[h]["mean"] >= 0.6 * best] or ranked[:1]
     seen_count = {h: htable.get(h, {}).get("n", 0) for h in HOOKS}
     used_hooks, used_topics, out = list(recent_hooks), set(recent_topics), []
+    chennai_seen = rng.randrange(3)   # random phase so Tanglish does not always land on the same weekday
     for seg in slots:
         if cold:
-            pool = [h for h in HOOKS if h not in used_hooks[-7:]] or list(HOOKS)
+            pool = [h for h in HOOKS if h not in used_hooks[-3:]] or list(HOOKS)
             hook, mode = rng.choices(pool, weights=[HOOK_PRIOR.get(x, 1) for x in pool])[0], "rotate"
         elif rng.random() < EXPLORE_SHARE:
             least = min(seen_count[h] for h in HOOKS if h not in used_hooks[-3:] or len(HOOKS) < 5)
@@ -84,7 +119,13 @@ def plan(n, recent_hooks, recent_topics, rng=None):
         topic = rng.choice(topics)
         used_hooks.append(hook)
         used_topics.add(topic)
-        out.append({"hook": hook, "segment": seg, "topic": topic, "mode": mode})
+        # Owner-approved language test: every third Chennai post gets a Tanglish hook.
+        lang = "en"
+        if seg == "chennai_tn":
+            chennai_seen += 1
+            if chennai_seen % round(1 / TANGLISH_SHARE) == 0:
+                lang = "tanglish"
+        out.append({"hook": hook, "segment": seg, "topic": topic, "mode": mode, "lang": lang})
     return out, htable
 
 
