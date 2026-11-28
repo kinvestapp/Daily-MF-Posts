@@ -4,3 +4,7 @@
 {"ts": "2026-11-28T07:24:23.600074+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2342, "output_tokens": 4061, "est_usd": 0.02265}
 {"ts": "2026-11-28T07:25:02.998602+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2368, "output_tokens": 3823, "est_usd": 0.02148}
 {"ts": "2026-11-28T07:26:17.103623+00:00", "model": "claude-sonnet-5-5", "purpose": "planner-judge", "input_tokens": 9947, "output_tokens": 10000, "est_usd": 0.17984}
+{"ts": "2026-11-28T07:28:14.551593+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2348, "output_tokens": 3643, "est_usd": 0.02056}
+{"ts": "2026-11-28T07:28:49.088069+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2353, "output_tokens": 3361, "est_usd": 0.01916}
+{"ts": "2026-11-28T07:29:26.985984+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2478, "output_tokens": 3719, "est_usd": 0.02107}
+{"ts": "2026-11-28T07:30:01.094844+00:00", "model": "claude-haiku-4-5-20251001", "purpose": "planner-write", "input_tokens": 2513, "output_tokens": 3219, "est_usd": 0.01861}
