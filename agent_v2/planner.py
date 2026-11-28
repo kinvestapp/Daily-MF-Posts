@@ -328,6 +328,10 @@ def main():
     if llm.month_spend() >= 0.8 * cap:
         lines = lines[:1] + ["", f"**NEEDS OWNER APPROVAL: API spend is at {llm.month_spend()/cap:.0%} of the ${cap:.2f} monthly cap. Writing stops at the cap; raise MONTHLY_BUDGET_USD to continue.**"] + lines[1:]
     lines += [f"- {h}: mean {v['mean']} over {v['n']} post(s)" for h, v in sorted(htable.items(), key=lambda kv: -kv[1]['mean'])] or ["- no results collected yet (rotating hooks evenly)"]
+    from .strategist import load_scores, table
+    for key, label in (("lang", "Language test (English vs Tanglish)"), ("series", "Series"), ("theme", "Theme test")):
+        t = table(load_scores(), key)
+        lines += ["", f"## {label}", ""] + ([f"- {k}: mean {v['mean']} over {v['n']} post(s)" for k, v in sorted(t.items(), key=lambda kv: -kv[1]['mean'])] or ["- no results yet"])
     lines += ["", "## This batch (hook score / series / language)", ""]
     lines += [f"- {name}: {accepted[i]['hook_score']}/10, {accepted[i]['series']}, {accepted[i]['lang']}. Headline: {accepted[i]['slides'][0]['headline']}"
               for name, i in zip(saved, sorted(accepted))]

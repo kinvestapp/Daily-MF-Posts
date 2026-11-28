@@ -1,0 +1,38 @@
+name: reply-to-comments
+
+# Every 2 hours, 08:00-22:00 IST. No model call unless there are new comments.
+on:
+  schedule:
+    - cron: '30 2-16/2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: comments
+  cancel-in-progress: false
+
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests anthropic
+      - name: Reply to new comments
+        run: python -m agent_v2.comments
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_API_CALLS_PER_RUN: "1"
+          MONTHLY_BUDGET_USD: "6"
+      - name: Remember answered comments
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Comment replies (agent v2)"
+          file_pattern: "data/replied_comments.json data/api_usage.jsonl"
